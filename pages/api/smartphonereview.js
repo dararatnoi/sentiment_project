@@ -12,7 +12,7 @@ export default async function handler(req, res) {
     //   break;
     case "GET":
       const allReview = await db.collection("SmartphoneReview").find({ is_sentiment_comment: true }).toArray();
-      res.json({ status: 200, data: allReview });
+      res.json(allReview);
       break;
   }
 }
