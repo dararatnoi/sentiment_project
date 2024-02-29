@@ -1,118 +1,185 @@
 import Image from "next/image";
-import { Inter } from "next/font/google";
+import Navbar from "@/components/navbar";
+import React, { useEffect, useState } from 'react';
+import { Card, Skeleton } from "@nextui-org/react";
 
-const inter = Inter({ subsets: ["latin"] });
 
 export default function Home() {
+  const [allReviews, setAllReviews] = useState([]);
+  const [statusData, setStatusData] = React.useState(false);
+  const [isLoaded, setIsLoaded] = React.useState(false);
+
+  useEffect(() => {
+    setStatusData(false)
+    setIsLoaded(false); // Set loading state before fetching data
+    const fetchData = async () => {
+      let res = await fetch("http://localhost:3000/api/smartphonereview", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      let data = await res.json();
+      // Do something with allPosts, like setting state
+      setAllReviews(data);
+      console.log("test")
+      setStatusData(true);
+      setIsLoaded(true); // Set loading state after fetching data
+    };
+
+    fetchData();
+  }, []);
+
+  // if(statusData){
+  //   return (
+  //     <>
+  //     <Navbar/>
+  //       <div className="container" style={{ marginTop: '6%' }}>
+  //   <div className="row col-12 row-gap-3 mb-5">
+  //     <div className="col-3">
+  //       <div
+  //         className="card hov-primary border-0"
+  //         style={{
+  //           backgroundColor: '#8d9ec6',
+  //           color: 'aliceblue',
+  //           boxShadow: '8px 8px 10px rgba(0, 0, 0, 0.2)',
+  //           borderRadius: '20px',
+  //         }}
+  //       >
+  //         <div className="card-body d-flex justify-content-between mb-2">
+  //           <div>
+  //           <h3 className="card-title">{allReviews.data.length}</h3>
+  //             <h6 className="card-subtitle mb-2 text-body-secondary">Reviews</h6>
+  //           </div>
+  //           <span className="material-icons" style={{ fontSize: '30px' }}>
+  //             mode_comment
+  //           </span>
+  //         </div>
+  //       </div>
+  //     </div>
+  //     <div className="col-3">
+  //       <div
+  //         className="card border-0 hov-primary"
+  //         style={{
+  //           backgroundColor: '#70c1b3',
+  //           color: 'aliceblue',
+  //           boxShadow: '8px 8px 10px rgba(0, 0, 0, 0.2)',
+  //           borderRadius: '20px',
+  //         }}
+  //       >
+  //         <div className="card-body d-flex justify-content-between mb-2">
+  //           <div>
+  //             <h3 className="card-title">42,000</h3>
+  //             <h6 className="card-subtitle mb-2 text-body-secondary">Positive Reviews</h6>
+  //           </div>
+  //           <span className="material-icons" style={{ fontSize: '30px' }}>
+  //             sentiment_satisfied_alt
+  //           </span>
+  //         </div>
+  //       </div>
+  //     </div>
+  //     <div className="col-3">
+  //       <div
+  //         className="card border-0 hov-primary"
+  //         style={{
+  //           backgroundColor: '#EFBF38',
+  //           color: 'aliceblue',
+  //           boxShadow: '8px 8px 10px rgba(0, 0, 0, 0.2)',
+  //           borderRadius: '20px',
+  //         }}
+  //       >
+  //         <div className="card-body d-flex justify-content-between mb-2">
+  //           <div>
+  //             <h3 className="card-title">10,000</h3>
+  //             <h6 className="card-subtitle mb-2 text-body-secondary">Neutral Reviews</h6>
+  //           </div>
+  //           <span className="material-icons" style={{ fontSize: '30px' }}>
+  //             sentiment_neutral
+  //           </span>
+  //         </div>
+  //       </div>
+  //     </div>
+  //     <div className="col-3">
+  //       <div
+  //         className="card border-0 hov-primary"
+  //         style={{
+  //           backgroundColor: '#dd7373',
+  //           color: 'aliceblue',
+  //           boxShadow: '8px 8px 10px rgba(0, 0, 0, 0.2)',
+  //           borderRadius: '20px',
+  //         }}
+  //       >
+  //         <div className="card-body d-flex justify-content-between mb-2">
+  //           <div>
+  //             <h3 className="card-title">5,000</h3>
+  //             <h6 className="card-subtitle mb-2 text-body-secondary">Negative Reviews</h6>
+  //           </div>
+  //           <span className="material-icons" style={{ fontSize: '30px' }}>
+  //             sentiment_very_dissatisfied
+  //           </span>
+  //         </div>
+  //       </div>
+  //     </div>
+  //   </div>
+  // </div>
+
+  //     </>
+  //   );
+  //       }
+  //       else{
   return (
-    <main
-      className={`flex min-h-screen flex-col items-center justify-between p-24 ${inter.className}`}
-    >
-      <div className="z-10 max-w-5xl w-full items-center justify-between font-mono text-sm lg:flex">
-        <p className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
-          Get started by editing&nbsp;
-          <code className="font-mono font-bold">pages/index.js</code>
-        </p>
-        <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none">
-          <a
-            className="pointer-events-none flex place-items-center gap-2 p-8 lg:pointer-events-auto lg:p-0"
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{" "}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className="dark:invert"
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
+    <>
+      <Navbar />
+      <div className="container mx-auto mt-8">
+        <div className="flex flex-wrap -m-3 mb-5">
+          <div className="w-full sm:w-1/2 md:w-1/4 p-3">
+            <Skeleton isLoaded={statusData}>
+              <div className="bg-custom-blue text-white shadow-md rounded-[20px] p-4 py-6 pb-8 flex justify-between">
+                <div>
+                  <h3 className="text-2xl font-bold text-white">{statusData ? allReviews.data.length : ""}</h3>
+
+                  <h6 className="text-lg font-normal text-gray-600">Reviews</h6>
+                </div>
+                <span className="material-icons text-3xl">mode_comment</span>
+              </div>
+            </Skeleton>
+          </div>
+
+          <div className="w-full sm:w-1/2 md:w-1/4 p-3">
+            <div className="bg-custom-green text-white shadow-md rounded-[20px] p-4 py-6 pb-8 flex justify-between">
+              <div>
+                <h3 className="text-2xl font-bold">42,000</h3>
+                <h6 className="text-lg font-normal text-gray-600">Positive Reviews</h6>
+              </div>
+              <span className="material-icons text-3xl">sentiment_satisfied_alt</span>
+            </div>
+          </div>
+
+          <div className="w-full sm:w-1/2 md:w-1/4 p-3">
+            <div className="bg-custom-yellow text-white shadow-md rounded-[20px] p-4 py-6 pb-8 flex justify-between">
+              <div>
+                <h3 className="text-2xl font-bold">10,000</h3>
+                <h6 className="text-lg font-normal text-gray-600">Neutral Reviews</h6>
+              </div>
+              <span className="material-icons text-3xl">sentiment_neutral</span>
+            </div>
+          </div>
+
+          <div className="w-full sm:w-1/2 md:w-1/4 p-3">
+            <div className="bg-custom-red text-white shadow-md rounded-[20px] p-4 py-6 pb-8 flex justify-between">
+              <div>
+                <h3 className="text-2xl font-bold">5,000</h3>
+                <h6 className="text-lg font-normal text-gray-600">Negative Reviews</h6>
+              </div>
+              <span className="material-icons text-3xl">sentiment_very_dissatisfied</span>
+            </div>
+          </div>
+
         </div>
+
       </div>
+    </>
 
-      <div className="relative flex place-items-center before:absolute before:h-[300px] before:w-full sm:before:w-[480px] before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-full sm:after:w-[240px] after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700/10 after:dark:from-sky-900 after:dark:via-[#0141ff]/40 before:lg:h-[360px]">
-        <Image
-          className="relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert"
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
+  )
 
-      <div className="mb-32 grid text-center lg:max-w-5xl lg:w-full lg:mb-0 lg:grid-cols-4 lg:text-left">
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Docs{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Find in-depth information about Next.js features and API.
-          </p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Learn{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Learn about Next.js in an interactive course with&nbsp;quizzes!
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Templates{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Discover and deploy boilerplate example Next.js&nbsp;projects.
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Deploy{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50 text-balance`}>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
-  );
 }
