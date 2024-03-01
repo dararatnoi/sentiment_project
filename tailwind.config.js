@@ -18,7 +18,8 @@ module.exports = {
         'custom-green':'#70c1b3',
         'custom-blue':'#8d9ec6',
         'custom-yellow':'#EFBF38',
-        'custom-red': '#dd7373'
+        'custom-red': '#dd7373',
+        'costom-pbg':'#F5F5F5'
       }
     },
   },
