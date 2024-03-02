@@ -24,9 +24,9 @@ export default async function handler(req, res) {
       const count_samsung_pos = await db.collection("SmartphoneReview").countDocuments({ is_sentiment_comment:true,Sentiment_Label: { $eq: "pos" },Brand:{$eq:"Samsung"}});
       const count_samsung_neu = await db.collection("SmartphoneReview").countDocuments({ is_sentiment_comment:true,Sentiment_Label: { $eq: "neu" },Brand:{$eq:"Samsung"}});
       const count_samsung_neg = await db.collection("SmartphoneReview").countDocuments({ is_sentiment_comment:true,Sentiment_Label: { $eq: "neg" },Brand:{$eq:"Samsung"}});
-      const count_vivo_pos = await db.collection("SmartphoneReview").countDocuments({ is_sentiment_comment:true,Sentiment_Label: { $eq: "pos" },Brand:{$eq:"vivo"}});
-      const count_vivo_neu = await db.collection("SmartphoneReview").countDocuments({ is_sentiment_comment:true,Sentiment_Label: { $eq: "neu" },Brand:{$eq:"vivo"}});
-      const count_vivo_neg = await db.collection("SmartphoneReview").countDocuments({ is_sentiment_comment:true,Sentiment_Label: { $eq: "neg" },Brand:{$eq:"vivo"}});
+      const count_vivo_pos = await db.collection("SmartphoneReview").countDocuments({ is_sentiment_comment:true,Sentiment_Label: { $eq: "pos" },Brand:{$eq:"Vivo"}});
+      const count_vivo_neu = await db.collection("SmartphoneReview").countDocuments({ is_sentiment_comment:true,Sentiment_Label: { $eq: "neu" },Brand:{$eq:"Vivo"}});
+      const count_vivo_neg = await db.collection("SmartphoneReview").countDocuments({ is_sentiment_comment:true,Sentiment_Label: { $eq: "neg" },Brand:{$eq:"Vivo"}});
       const count_xiaomi_pos = await db.collection("SmartphoneReview").countDocuments({ is_sentiment_comment:true,Sentiment_Label: { $eq: "pos" },Brand:{$eq:"Xiaomi"}});
       const count_xiaomi_neu = await db.collection("SmartphoneReview").countDocuments({ is_sentiment_comment:true,Sentiment_Label: { $eq: "neu" },Brand:{$eq:"Xiaomi"}});
       const count_xiaomi_neg = await db.collection("SmartphoneReview").countDocuments({ is_sentiment_comment:true,Sentiment_Label: { $eq: "neg" },Brand:{$eq:"Xiaomi"}});
