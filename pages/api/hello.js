@@ -3,7 +3,7 @@ import clientPromise from "../../lib/mongodb";
 
 export default async function handler(req, res) {
   const client = await clientPromise;
-  const db = client.db("deployData");
+  const db = client.db("test");
   switch (req.method) {
     // case "POST":
     //   let bodyObject = JSON.parse(req.body);
@@ -11,7 +11,7 @@ export default async function handler(req, res) {
     //   res.json(myPost.ops[0]);
     //   break;
     case "GET":
-      const allPosts = await db.collection("SmartphoneReviewTrue").find({}).toArray();
+      const allPosts = await db.collection("test").find({}).toArray();
       res.json({ status: 200, data: allPosts });
       break;
   }
