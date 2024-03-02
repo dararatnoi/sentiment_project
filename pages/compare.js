@@ -1,28 +1,30 @@
 // import React from 'react'
-import Image from "next/image";
 import Navbar from "@/components/navbar";
-import anychart from 'anychart'; // Add this line
 import React, { useEffect, useState } from 'react';
 import { Autocomplete, AutocompleteItem } from "@nextui-org/react";
 import { animals } from "./testdata";
 import Chart from 'chart.js/auto';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
+import anychart from 'anychart';
 
 
 export default function compare() {
   // const [allReviews, setAllReviews] = useState([]);
-  const [statusData, setStatusData] = React.useState(false);
-  const [isLoaded, setIsLoaded] = React.useState(false);
+  // const [statusData, setStatusData] = React.useState(false);
+  // const [isLoaded, setIsLoaded] = React.useState(false);
+  const [brands, setBrands] = useState([]);
   const [selectedBrand, setSelectedBrand] = useState('');
-  const [brand, setBrand] = useState([]);
-  const [smartphoneData, setSmartphoneData] = useState({});
+  const [smartphoneModels, setSmartphoneModels] = useState([]);
+  const [selectedModel, setSelectedModel] = useState('');
+
 
   useEffect(() => {
     const fetchBrands = async () => {
       try {
-        const response = await fetch('your_brand_api_endpoint');
+        const response = await fetch('http://localhost:3000/api/smartphonename');
         const data = await response.json();
-        setBrand(data);
+        const brandNames = Object.keys(data.brand_smartphone_list);
+        setBrands(brandNames); // Corrected line
       } catch (error) {
         console.error('Error fetching brands:', error);
       }
@@ -30,30 +32,25 @@ export default function compare() {
     fetchBrands();
   }, []);
 
-  useEffect(() => {
-    if (selectedBrand) {
-      const fetchSmartphoneData = async () => {
-        try {
-          const allBrandSmartphone = [];
-          for (const brand of brandsToCompare) {
-            const response = await fetch(`your_smartphone_api_endpoint?brand=${brand}`);
-            const data = await response.json();
-            allBrandSmartphone.push({ brand, data });
-          }
 
-          setSmartphoneData(allBrandSmartphone);
-          setIsLoaded(true);
-        } catch (error) {
-          console.error(`Error fetching smartphones for ${brand}:`, error);
-        }
-      };
-      fetchSmartphoneData();
+  const fetchSmartphoneModels = async (brand) => {
+    try {
+      const response = await fetch('http://localhost:3000/api/smartphonename');
+      const data = await response.json();
+      const modelsSmp = data.brand_smartphone_list[brand];
+      setSmartphoneModels(modelsSmp);
+    } catch (error) {
+      console.error(`Error fetching smartphones for ${brand}:`, error);
     }
-  }, [smartphoneData]);
+  };
 
   const handleBrandChange = (selectedBrand) => {
     setSelectedBrand(selectedBrand);
-    setIsBrandSelected(true);
+    fetchSmartphoneModels(selectedBrand);
+  };
+
+  const handleModelChange = (selectedModel) => {
+    setSelectedModel(selectedModel);
   };
   // {
 
@@ -480,13 +477,13 @@ export default function compare() {
               isRequired
               variant="bordered"
               label="Select Brand"
-              defaultItems={brand}
-              defaultSelectedKey=""
-              className="max-w-xs"
+              items={brands.map(brand => ({ label: brand, value: brand}))}
               onChange={handleBrandChange}
+              className="max-w-xs"
             >
               {(item) => <AutocompleteItem key={item.value}>{item.label}</AutocompleteItem>}
             </Autocomplete>
+
           </div>
 
           <div className="bg-white rounded-[12px]">
@@ -494,18 +491,14 @@ export default function compare() {
               isRequired
               variant="bordered"
               label="Select Smartphone"
-              items={smartphones}
-              // defaultItems={animals}
-              defaultSelectedKey=""
+              items={smartphoneModels.map(model => ({ label: model, value: model }))}
+              onChange={handleModelChange}
               className="max-w-xs"
-              disabled={!isBrandSelected}
+              disabled={!selectedBrand}
             >
               {(item) => <AutocompleteItem key={item.value}>{item.label}</AutocompleteItem>}
             </Autocomplete>
           </div>
-
-
-
 
           <div className="bg-white rounded-[12px]">
             <Autocomplete

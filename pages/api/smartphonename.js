@@ -7,18 +7,31 @@ export default async function handler(req, res) {
     switch (req.method) {
         case "GET":
             try {
-                const keywordSearchList = await db.collection("SmartphoneReview").find({}, { projection: { keyword_search: 1, _id: 0 } }).toArray();
+                const keywordSearchList = await db.collection("SmartphoneReview").find({}, { projection: { keyword_search: 1, Brand: 1, _id: 0 } }).toArray();
 
-                const keywordSet = new Set();
+                const brandMap = new Map();
 
                 keywordSearchList.forEach(item => {
-                    keywordSet.add(item.keyword_search);
+                    const brand = item.Brand;
+                    const smartphone = item.keyword_search;
+
+                    if (!brandMap.has(brand)) {
+                        brandMap.set(brand, new Set([smartphone]));
+                    } else {
+                        const smartphones = brandMap.get(brand);
+                        smartphones.add(smartphone);
+                        brandMap.set(brand, smartphones);
+                    }
                 });
 
-                const BrandSearchArray = Array.from(keywordSet);
+                // Convert map to object
+                const brandData = {};
+                brandMap.forEach((value, key) => {
+                    brandData[key] = Array.from(value);
+                });
 
                 res.status(200).json({
-                    keyword_search_list: BrandSearchArray
+                    brand_smartphone_list: brandData
                 });
             } catch (error) {
                 console.error("Error fetching data:", error);
