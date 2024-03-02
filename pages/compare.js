@@ -3,6 +3,8 @@ import Image from "next/image";
 import Navbar from "@/components/navbar";
 import anychart from 'anychart'; // Add this line
 import React, { useEffect, useState } from 'react';
+import { Autocomplete, AutocompleteItem } from "@nextui-org/react";
+import { animals } from "./testdata";
 import Chart from 'chart.js/auto';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 
@@ -11,93 +13,115 @@ export default function compare() {
   // const [allReviews, setAllReviews] = useState([]);
   const [statusData, setStatusData] = React.useState(false);
   const [isLoaded, setIsLoaded] = React.useState(false);
-  const [brandData, setBrandData] = useState([]);
+  const [selectedBrand, setSelectedBrand] = useState('');
+  const [brand, setBrand] = useState([]);
+  const [smartphoneData, setSmartphoneData] = useState({});
 
   useEffect(() => {
-    const fetchDataRadar = async () => {
+    const fetchBrands = async () => {
       try {
-        const allBrandSmartphone = [];
-        for (const brand of brandsToCompare) {
-          const responseRd = await fetch('http://localhost:3000/api/smartphonereview?keyword_search=${encodeURIComponent(brand)}');
-          const data = await responseRd.json();
-          allBrandSmartphone.push({ brand, data });
-        }
-
-        setBrandData(allBrandSmartphone);
-        setIsLoaded(true);
+        const response = await fetch('your_brand_api_endpoint');
+        const data = await response.json();
+        setBrand(data);
       } catch (error) {
-        console.error('Error fetching RadarDataChart:', error);
+        console.error('Error fetching brands:', error);
       }
     };
-    fetchDataRadar();
+    fetchBrands();
+  }, []);
 
-    // {
-
-    // }
-    // Ensure the DOM element exists before initializing the chart
-    const rdChartElement = document.getElementById('RadarChart');
-    if (rdChartElement) {
-      var rdChartData = {
-        labels: ["Camera", "Battery", "Screen", "Performance", "Price"],
-        datasets: [{
-          label: 'iPhone 14',
-          data: [6.5, 7.1, 5.4, 9.8, 8.4],
-          backgroundColor: 'rgba(255, 99, 132, 0.2)',
-          borderColor: 'rgb(255, 99, 132)',
-        },
-        {
-          label: 'Samsung Galaxy S23',
-          data: [2.8, 4.8, 4.0, 1.9, 9.6],
-          backgroundColor: 'rgba(54, 162, 235, 0.2)',
-          borderColor: 'rgb(54, 162, 235)'
-        }]
-      };
-
-      // brandData.forEach(({ brand, data }) => {
-      //   // Prepare data for each brand
-      //   const brandData = {
-      //     label: brand,
-      //     data: [0, 0, 0, 0, 0], // Initialize all aspects to 0
-      //     backgroundColor: 'rgba(255, 99, 132, 0.2)',
-      //     borderColor: 'rgb(255, 99, 132)',
-      //   };
-
-      //   // Iterate through the aspects of each review data
-      //   data.forEach(review => {
-      //     review.Aspects.forEach(aspect => {
-      //       // Update the corresponding aspect index with sentiment label
-      //       if (aspect.Aspect_Sentiment_Label === 'pos') {
-      //         brandData.data[rdChartData.labels.indexOf(aspect.aspects)] += 1; // Increment positive aspect count
-      //       }
-      //     });
-      //   });
-
-      //   // Add the brand data to the chart datasets if there are positive aspects
-      //   if (brandData.data.some(count => count > 0)) {
-      //     rdChartData.datasets.push(brandData);
-      //   }
-      // });
-
-      const rdChartContext = rdChartElement.getContext('2d');
-      // Create the radar chart
-      let RadarChart = new Chart(rdChartContext, {
-        type: 'radar',
-        data: rdChartData,
-        options: {
-          elements: {
-            line: {
-              borderWidth: 3
-            }
+  useEffect(() => {
+    if (selectedBrand) {
+      const fetchSmartphoneData = async () => {
+        try {
+          const allBrandSmartphone = [];
+          for (const brand of brandsToCompare) {
+            const response = await fetch(`your_smartphone_api_endpoint?brand=${brand}`);
+            const data = await response.json();
+            allBrandSmartphone.push({ brand, data });
           }
-        }
-      });
 
-      // Cleanup function to destroy the chart instance
-      return () => {
-        RadarChart.destroy();
+          setSmartphoneData(allBrandSmartphone);
+          setIsLoaded(true);
+        } catch (error) {
+          console.error(`Error fetching smartphones for ${brand}:`, error);
+        }
       };
+      fetchSmartphoneData();
     }
-  }, [brandData]);
+  }, [smartphoneData]);
+
+  const handleBrandChange = (selectedBrand) => {
+    setSelectedBrand(selectedBrand);
+    setIsBrandSelected(true);
+  };
+  // {
+
+  // }
+  // Ensure the DOM element exists before initializing the chart
+  // const rdChartElement = document.getElementById('RadarChart');
+  // if (rdChartElement) {
+  //   var rdChartData = {
+  //     labels: ["Camera", "Battery", "Screen", "Performance", "Price"],
+  //     datasets: [{
+  //       label: 'iPhone 14',
+  //       data: [6.5, 7.1, 5.4, 9.8, 8.4],
+  //       backgroundColor: 'rgba(255, 99, 132, 0.2)',
+  //       borderColor: 'rgb(255, 99, 132)',
+  //     },
+  //     {
+  //       label: 'Samsung Galaxy S23',
+  //       data: [2.8, 4.8, 4.0, 1.9, 9.6],
+  //       backgroundColor: 'rgba(54, 162, 235, 0.2)',
+  //       borderColor: 'rgb(54, 162, 235)'
+  //     }]
+  //   };
+
+  //   // brandData.forEach(({ brand, data }) => {
+  //   //   // Prepare data for each brand
+  //   //   const brandData = {
+  //   //     label: brand,
+  //   //     data: [0, 0, 0, 0, 0], // Initialize all aspects to 0
+  //   //     backgroundColor: 'rgba(255, 99, 132, 0.2)',
+  //   //     borderColor: 'rgb(255, 99, 132)',
+  //   //   };
+
+  //   //   // Iterate through the aspects of each review data
+  //   //   data.forEach(review => {
+  //   //     review.Aspects.forEach(aspect => {
+  //   //       // Update the corresponding aspect index with sentiment label
+  //   //       if (aspect.Aspect_Sentiment_Label === 'pos') {
+  //   //         brandData.data[rdChartData.labels.indexOf(aspect.aspects)] += 1; // Increment positive aspect count
+  //   //       }
+  //   //     });
+  //   //   });
+
+  //   //   // Add the brand data to the chart datasets if there are positive aspects
+  //   //   if (brandData.data.some(count => count > 0)) {
+  //   //     rdChartData.datasets.push(brandData);
+  //   //   }
+  //   // });
+
+  //   const rdChartContext = rdChartElement.getContext('2d');
+  //   // Create the radar chart
+  //   let RadarChart = new Chart(rdChartContext, {
+  //     type: 'radar',
+  //     data: rdChartData,
+  //     options: {
+  //       elements: {
+  //         line: {
+  //           borderWidth: 3
+  //         }
+  //       }
+  //     }
+  //   });
+
+  //   // Cleanup function to destroy the chart instance
+  //   return () => {
+  //     RadarChart.destroy();
+  //   };
+  // }
+
 
   useEffect(() => {
     const totalCountSm1 = 300 + 100 + 500;
@@ -449,11 +473,92 @@ export default function compare() {
       `}</style>
 
       <Navbar />
-      <div className="md:container md:mx-auto mt-8">
-        <div className="columns-3 hover:columns-3 text-center">
+      <div className="md:container md:mx-auto mt-3">
+        <div className="grid grid-cols-6 gap-4">
+          <div className="bg-white rounded-[12px]">
+            <Autocomplete
+              isRequired
+              variant="bordered"
+              label="Select Brand"
+              defaultItems={brand}
+              defaultSelectedKey=""
+              className="max-w-xs"
+              onChange={handleBrandChange}
+            >
+              {(item) => <AutocompleteItem key={item.value}>{item.label}</AutocompleteItem>}
+            </Autocomplete>
+          </div>
+
+          <div className="bg-white rounded-[12px]">
+            <Autocomplete
+              isRequired
+              variant="bordered"
+              label="Select Smartphone"
+              items={smartphones}
+              // defaultItems={animals}
+              defaultSelectedKey=""
+              className="max-w-xs"
+              disabled={!isBrandSelected}
+            >
+              {(item) => <AutocompleteItem key={item.value}>{item.label}</AutocompleteItem>}
+            </Autocomplete>
+          </div>
+
+
+
+
+          <div className="bg-white rounded-[12px]">
+            <Autocomplete
+              isRequired
+              variant="bordered"
+              label="Select Brand"
+              defaultItems={animals}
+              defaultSelectedKey="cat"
+              className="max-w-xs"
+            >
+              {(item) => <AutocompleteItem key={item.value}>{item.label}</AutocompleteItem>}
+            </Autocomplete>
+          </div>
+          <div className="bg-white rounded-[12px]">
+            <Autocomplete
+              isRequired
+              variant="bordered"
+              label="Select Smartphone"
+              defaultItems={animals}
+              defaultSelectedKey="cat"
+              className="max-w-xs"
+            >
+              {(item) => <AutocompleteItem key={item.value}>{item.label}</AutocompleteItem>}
+            </Autocomplete>
+          </div>
+          <div className="bg-white rounded-[12px]">
+            <Autocomplete
+              isDisabled
+              variant="bordered"
+              label="Select Brand"
+              defaultItems={animals}
+              className="max-w-xs"
+            >
+              {(item) => <AutocompleteItem key={item.value}>{item.label}</AutocompleteItem>}
+            </Autocomplete>
+          </div>
+          <div className="bg-white rounded-[12px]">
+            <Autocomplete
+              isDisabled
+              variant="bordered"
+              label="Select Smartphone"
+              defaultItems={animals}
+              className="max-w-xs"
+            >
+              {(item) => <AutocompleteItem key={item.value}>{item.label}</AutocompleteItem>}
+            </Autocomplete>
+          </div>
+          {/* <div className="columns-3 hover:columns-3 text-center">
+
           <div className="bg-white">Search1</div>
           <div className="bg-white">Search2</div>
           <div className="bg-white">Search3</div>
+        </div> */}
         </div>
       </div>
 
@@ -484,7 +589,7 @@ export default function compare() {
         </div>
       </div> */}
 
-      <div className="md:container md:mx-auto md:my-7 bg-danger">
+      <div className="md:container md:mx-auto md:mt-3 bg-danger">
         <div className="grid grid-cols-10 gap-4">
           <div className="col-span-4">
             <img className="w-full aspect-square ..." src="..." />
