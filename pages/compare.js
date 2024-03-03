@@ -21,9 +21,9 @@ export default function compare() {
   useEffect(() => {
     const fetchBrands = async () => {
       try {
-        const response = await fetch('http://localhost:3000/api/smartphonename');
+        const response = await fetch('http://localhost:3000/api/compare_smartphonename');
         const data = await response.json();
-        const brandNames = Object.keys(data.brand_smartphone_list);
+        const brandNames = Object.keys(data);
         setBrands(brandNames); // Corrected line
       } catch (error) {
         console.error('Error fetching brands:', error);
@@ -33,26 +33,73 @@ export default function compare() {
   }, []);
 
 
-  const fetchSmartphoneModels = async (brand) => {
-    try {
-      const response = await fetch('http://localhost:3000/api/smartphonename');
-      const data = await response.json();
-      const modelsSmp = data.brand_smartphone_list[brand];
-      setSmartphoneModels(modelsSmp);
-    } catch (error) {
-      console.error(`Error fetching smartphones for ${brand}:`, error);
-    }
-  };
+  // const fetchSmartphoneModels = async (brand) => {
+  //   try {
+  //     const response = await fetch('http://localhost:3000/api/smartphonename');
+  //     const data = await response.json();
+  //     const modelsSmp = data[brand];
+  //     setSmartphoneModels(modelsSmp);
+  //   } catch (error) {
+  //     console.error(`Error fetching smartphones for ${brand}:`, error);
+  //   }
+  // };
 
-  const handleBrandChange = (selectedBrand) => {
-    setSelectedBrand(selectedBrand);
-    fetchSmartphoneModels(selectedBrand);
-  };
+  const SelectedSmartphone = (select) => {
+    let result = []
+    selectedBrand.forEach(element => {
+      result.push(element)
+    });
+  }
+
+  // const handleBrandChange = (selectedBrand) => {
+  //   setSelectedBrand(selectedBrand);
+  //   fetchSmartphoneModels(selectedBrand);
+  // };
 
   const handleModelChange = (selectedModel) => {
     setSelectedModel(selectedModel);
   };
   // {
+
+  useEffect(() => {
+    const rdChartElement = document.getElementById('RadarChart');
+    if (rdChartElement) {
+      var rdChartData = {
+        labels: ["Camera", "Battery", "Screen", "Performance", "Price"],
+        datasets: [{
+          label: 'iPhone 14',
+          data: [6.5, 7.1, 5.4, 9.8, 8.4],
+          backgroundColor: 'rgba(255, 99, 132, 0.2)',
+          borderColor: 'rgb(255, 99, 132)',
+        },
+        {
+          label: 'Samsung Galaxy S23',
+          data: [2.8, 4.8, 4.0, 1.9, 9.6],
+          backgroundColor: 'rgba(54, 162, 235, 0.2)',
+          borderColor: 'rgb(54, 162, 235)'
+        }]
+      };
+
+      const rdChartContext = rdChartElement.getContext('2d');
+      // Create the radar chart
+      let RadarChart = new Chart(rdChartContext, {
+        type: 'radar',
+        data: rdChartData,
+        options: {
+          elements: {
+            line: {
+              borderWidth: 3
+            }
+          }
+        }
+      });
+
+      // Cleanup function to destroy the chart instance
+      return () => {
+        RadarChart.destroy();
+      };
+    }
+  }, []);
 
   // }
   // Ensure the DOM element exists before initializing the chart
@@ -73,31 +120,6 @@ export default function compare() {
   //       borderColor: 'rgb(54, 162, 235)'
   //     }]
   //   };
-
-  //   // brandData.forEach(({ brand, data }) => {
-  //   //   // Prepare data for each brand
-  //   //   const brandData = {
-  //   //     label: brand,
-  //   //     data: [0, 0, 0, 0, 0], // Initialize all aspects to 0
-  //   //     backgroundColor: 'rgba(255, 99, 132, 0.2)',
-  //   //     borderColor: 'rgb(255, 99, 132)',
-  //   //   };
-
-  //   //   // Iterate through the aspects of each review data
-  //   //   data.forEach(review => {
-  //   //     review.Aspects.forEach(aspect => {
-  //   //       // Update the corresponding aspect index with sentiment label
-  //   //       if (aspect.Aspect_Sentiment_Label === 'pos') {
-  //   //         brandData.data[rdChartData.labels.indexOf(aspect.aspects)] += 1; // Increment positive aspect count
-  //   //       }
-  //   //     });
-  //   //   });
-
-  //   //   // Add the brand data to the chart datasets if there are positive aspects
-  //   //   if (brandData.data.some(count => count > 0)) {
-  //   //     rdChartData.datasets.push(brandData);
-  //   //   }
-  //   // });
 
   //   const rdChartContext = rdChartElement.getContext('2d');
   //   // Create the radar chart
@@ -477,8 +499,10 @@ export default function compare() {
               isRequired
               variant="bordered"
               label="Select Brand"
-              items={brands.map(brand => ({ label: brand, value: brand}))}
-              onChange={handleBrandChange}
+              items={brands.map(brand => ({ label: brand, value: brand }))}
+              selectedKey={selectedBrand}
+              // onSelectionChange={setSelectedBrand}
+              // onChange={handleBrandChange}
               className="max-w-xs"
             >
               {(item) => <AutocompleteItem key={item.value}>{item.label}</AutocompleteItem>}
@@ -492,7 +516,9 @@ export default function compare() {
               variant="bordered"
               label="Select Smartphone"
               items={smartphoneModels.map(model => ({ label: model, value: model }))}
-              onChange={handleModelChange}
+
+              // onChange={handleModelChange}
+              onChange={SelectedSmartphone}
               className="max-w-xs"
               disabled={!selectedBrand}
             >
@@ -500,6 +526,17 @@ export default function compare() {
             </Autocomplete>
           </div>
 
+
+
+
+
+
+
+
+
+
+
+          {/* <-------------------------------------------> */}
           <div className="bg-white rounded-[12px]">
             <Autocomplete
               isRequired
