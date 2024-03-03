@@ -33,6 +33,11 @@ export default async function handler(req, res) {
       const count_huawei_pos = await db.collection("SmartphoneReview").countDocuments({ is_sentiment_comment:true,Sentiment_Label: { $eq: "pos" },Brand:{$eq:"Huawei"}});
       const count_huawei_neu = await db.collection("SmartphoneReview").countDocuments({ is_sentiment_comment:true,Sentiment_Label: { $eq: "neu" },Brand:{$eq:"Huawei"}});
       const count_huawei_neg = await db.collection("SmartphoneReview").countDocuments({ is_sentiment_comment:true,Sentiment_Label: { $eq: "neg" },Brand:{$eq:"Huawei"}});
+      // aspect
+      const countover_apple_pos = await db.collection("SmartphoneReview").countDocuments({ is_sentiment_comment:true,Sentiment_Label: { $eq: "neg" },Brand:{$eq:"Huawei"}});
+
+
+      
       await res.json(
         {
           overviews:
@@ -80,6 +85,14 @@ export default async function handler(req, res) {
               count_neu: count_huawei_neu ?? 0,
               count_neg: count_huawei_neg ?? 0
             }
+          },
+          Aspect:{
+            Apple:{
+              Overview:{
+                pos: countover_apple_pos ?? 0
+              }
+            }
+            
           }
 
         }
