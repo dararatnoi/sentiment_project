@@ -3,7 +3,7 @@ import clientPromise from "../../lib/mongodb";
 export default async function handler(req, res) {
     try {
         let { smartphone } = req.query; // Get the selected smartphone from the request query parameters
-        // smartphone = "Huawei nova 11i"; // Assigning a new value to the variable
+        smartphone = "Huawei nova 11i"; // Assigning a new value to the variable
 
         if (!smartphone) {
             return res.status(400).json({ message: "Smartphone parameter is required" });

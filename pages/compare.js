@@ -25,12 +25,12 @@ export default function compare() {
   const [selectedModelSm2, setSelectedModelSm2] = useState('');
   const [reviews, setReviews] = useState([]);
 
-  const [selectedSentiments, setSelectedSentiments] = useState([]);
+  const [selectedSentiments, setSelectedSentiments] = useState([]); // Initial value set to "Positive"
+  const [filteredReviews, setFilteredReviews] = useState([]);
+
   const sentiment_select = ["Positive", "Neutral", "Negative"];
 
-  const handleSelectionChange = (selectedItems) => {
-    setSelectedSentiments(selectedItems);
-  };
+
 
   // Helper function to determine background color based on sentiment
   const getBackgroundColor = (sentiment) => {
@@ -129,6 +129,28 @@ export default function compare() {
       neg: 0
     }
   });
+
+  useEffect(() => {
+    // Filter reviews based on selected sentiments
+    const filtered = reviews.filter(review => {
+      if (selectedSentiments.length === 0) {
+        return true; // If no sentiment is selected, show all reviews
+      } else {
+        // Check if the review sentiment matches any of the selected sentiments
+        return selectedSentiments.some(sentiment => {
+          if (sentiment === 'Positive') {
+            // Adjust the condition based on your review structure
+            return review.positive;
+          } else if (sentiment === 'Neutral') {
+            return review.neutral;
+          } else if (sentiment === 'Negative') {
+            return review.negative;
+          }
+        });
+      }
+    });
+    setFilteredReviews(filtered);
+  }, [selectedSentiments, reviews]);
 
   // useEffect(() => {
   //   const table = document.getElementById('dataTable');
@@ -973,7 +995,8 @@ export default function compare() {
       `}</style>
 
       <Navbar />
-      {selectedModelSm1}
+      {selectedSentiments}
+      {/* {selectedModelSm1} */}
       {/* <>Brand: {selectedBrandSm1}</><br></br>
       <>smartphonename: {selectedModelSm1}</><br></br>
       <>count_pos: {overviewSm1.pos}</><br></br>
@@ -988,7 +1011,7 @@ export default function compare() {
       <div className="md:container md:mx-auto mt-3">
         <div className="grid grid-cols-3 gap-4">
           {/* Select Brand */}
-          <div className="grid grid-cols-5 gap-4">
+          <div className="grid grid-cols-5 gap-2">
             <div id="SelectBrandElm1" className="col-span-2 bg-white rounded-[12px]">
               <Autocomplete
                 isRequired
@@ -1021,7 +1044,7 @@ export default function compare() {
             </div>
           </div>
 
-          <div className="grid grid-cols-5 gap-4">
+          <div className="grid grid-cols-5 gap-2">
             <div id="SelectBrandElm2" className="col-span-2 bg-white rounded-[12px]">
               <Autocomplete
                 isRequired
@@ -1054,7 +1077,7 @@ export default function compare() {
             </div>
           </div>
 
-          <div className="grid grid-cols-5 gap-4">
+          <div className="grid grid-cols-5 gap-2">
             <div id="SelectBrandElm3" className="col-span-2 bg-white rounded-[12px]">
               <Autocomplete
                 variant="bordered"
@@ -1086,27 +1109,19 @@ export default function compare() {
           </div>
 
         </div>
-        <div className="my-2 md:col-start-2 md:col-span-1 flex justify-end">
-
-        </div>
-        {/* <div className="my-2 d-flex justify-content-end">
-          <div className="w-36">
-            <Filter />
-          </div>
-        </div> */}
       </div>
 
       <div className="md:container md:mx-auto md:mt-1 m-h-screen">
-        <div className="grid grid-cols-11 gap-2">
-          <div className="col-span-5 grid grid-col-4">
-            <div className="col-span">
+        <div className="grid grid-cols-11 gap-3">
+          <div className="col-span-5 grid grid-cols-5">
+            <div className="my-2 md:col-start-4 md:col-span-1 flex justify-end bg-white rounded-[12px]">
               <Select
                 variant="bordered"
                 // label="Filter Sentiment"
                 selectionMode="multiple"
-                placeholder="Aspect Action"
+                placeholder="Aspect"
                 selectedKeys={selectedSentiments}
-                onSelectionChange={handleSelectionChange}
+                onSelectionChange={setSelectedSentiments}
               >
                 {sentiment_select.map((item) => (
                   <SelectItem key={item} value={item}>
@@ -1115,7 +1130,7 @@ export default function compare() {
                 ))}
               </Select>
             </div>
-            <div className="col-span-4 overflow-y-auto shadow-md p-2 my-2 bg-white max-h-screen" style={{ borderRadius: "20px" }}>
+            <div className="col-span-5 overflow-y-auto shadow-md p-2 my-2 bg-white max-h-screen" style={{ borderRadius: "20px" }}>
               <table id="dataTable" className="m-h-screen md:w-full md:h-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 px-5">
                 <thead>
                   <tr>
@@ -1132,7 +1147,7 @@ export default function compare() {
                   </tr>
                 </thead>
                 <tbody>
-                  {reviews.map((review, index) => (
+                  {filteredReviews.map((review, index) => (
                     <tr key={index}>
                       <th scope="row" className="pl-5 pr-4 py-3 font-medium text-gray-500 whitespace-nowrap dark:text-white">
                         {index + 1}
@@ -1163,14 +1178,14 @@ export default function compare() {
             </div>
           </div>
           <div className="col-span-6">
-            <div className="grid grid-cols-2 gap-2">
+            <div className="grid grid-cols-2 gap-3">
               <div>
                 {/* <div id="wordCloudOverall" className="bg-white rounded-[20px] md:p-4 md:mx-2 md:my-2">Positive WordCloud</div>
                 <div className="bg-white rounded-[20px] md:p-4 md:mx-2 md:my-2">Negative WordCloud</div> */}
-                <div className="bg-white shadow-md rounded-[20px] md:p-3 md:my-2 w-full h-full" style={{ maxHeight: "45vh" }}>
+                <div className="bg-white shadow-md rounded-[20px] md:p-3 md:my-3 w-full h-full" style={{ maxHeight: "45vh" }}>
                   <canvas id="ovaBarChart">barchart</canvas>
                 </div>
-                <div className="bg-white shadow-md rounded-[20px] md:p-3 md:mr-4 md:my-2 w-full h-full" style={{ maxHeight: "39vh" }}>
+                <div className="bg-white shadow-md rounded-[20px] md:p-3 md:mr-4 md:my-3 w-full h-full" style={{ maxHeight: "39vh" }}>
                   <canvas id="fullStackBarChart" src="..."></canvas>
                 </div>
               </div>
