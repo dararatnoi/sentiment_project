@@ -20,7 +20,7 @@ export default function compare() {
   const [smartphoneModelsSm2, setSmartphoneModelsSm2] = useState([]);
 
   const [selectedBrandSm1, setSelectedBrandSm1] = useState('Apple');
-  const [selectedModelSm1, setSelectedModelSm1] = useState('Huawei nova 11i');
+  const [selectedModelSm1, setSelectedModelSm1] = useState('');
   const [selectedBrandSm2, setSelectedBrandSm2] = useState('Samsung');
   const [selectedModelSm2, setSelectedModelSm2] = useState('');
   const [reviews, setReviews] = useState([]);
@@ -1099,22 +1099,6 @@ export default function compare() {
       <div className="md:container md:mx-auto md:mt-1 m-h-screen">
         <div className="grid grid-cols-11 gap-2">
           <div className="col-span-5 grid grid-col-4">
-            <div className="col-span">
-              <Select
-                variant="bordered"
-                // label="Filter Sentiment"
-                selectionMode="multiple"
-                placeholder="Aspect Action"
-                selectedKeys={selectedSentiments}
-                onSelectionChange={handleSelectionChange}
-              >
-                {sentiment_select.map((item) => (
-                  <SelectItem key={item} value={item}>
-                    {item}
-                  </SelectItem>
-                ))}
-              </Select>
-            </div>
             <div className="col-span-4 overflow-y-auto shadow-md p-2 my-2 bg-white max-h-screen" style={{ borderRadius: "20px" }}>
               <table id="dataTable" className="m-h-screen md:w-full md:h-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 px-5">
                 <thead>
