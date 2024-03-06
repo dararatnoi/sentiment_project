@@ -306,7 +306,7 @@ export default function Home() {
             <Skeleton isLoaded={statusData} className="  shadow-md rounded-[20px]">
               <div className="bg-custom-blue text-white shadow-md rounded-[20px] p-4 py-6 pb-8 flex justify-between">
                 <div>
-                  <h3 className="text-2xl font-bold text-white">{count_all}</h3>
+                  <h3 className="text-2xl font-bold text-white">{count_all.toLocaleString()}</h3>
 
                   <h6 className="text-lg font-normal text-gray-600">Reviews</h6>
                 </div>
@@ -321,7 +321,7 @@ export default function Home() {
                 <div>
                   <h3 className="text-2xl font-bold">
                     {
-                      count_pos
+                      count_pos.toLocaleString()
                     }
                   </h3>
                   <h6 className="text-lg font-normal text-gray-600">Positive Reviews</h6>
@@ -338,7 +338,7 @@ export default function Home() {
                   <h3 className="text-2xl font-bold">
                     {
 
-                      count_neu
+                      count_neu.toLocaleString()
                     }
                   </h3>
                   <h6 className="text-lg font-normal text-gray-600">Neutral Reviews</h6>
@@ -354,7 +354,7 @@ export default function Home() {
                 <div>
                   <h3 className="text-2xl font-bold">
                     {
-                      count_neg
+                      count_neg.toLocaleString()
                     }
                   </h3>
                   <h6 className="text-lg font-normal text-gray-600">Negative Reviews</h6>
