@@ -14,11 +14,13 @@ export default async function handler(req, res) {
     await res.json(
         
         {
-          Aspect:{
+          brands:{
+            Aspect:{
             Apple:{
                 result
             }
         }
+      }
 
     })
       break;
