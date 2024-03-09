@@ -18,15 +18,15 @@ export default async function handler(req, res) {
       const count_apple_pos = await db.collection("SmartphoneReview").countDocuments({ is_sentiment_comment:true,Sentiment_Label: { $eq: "pos" },Brand:{$eq:"Apple"}});
       const count_apple_neu = await db.collection("SmartphoneReview").countDocuments({ is_sentiment_comment:true,Sentiment_Label: { $eq: "neu" },Brand:{$eq:"Apple"}});
       const count_apple_neg = await db.collection("SmartphoneReview").countDocuments({ is_sentiment_comment:true,Sentiment_Label: { $eq: "neg" },Brand:{$eq:"Apple"}});
-      const count_oppo_pos = await db.collection("SmartphoneReview").countDocuments({ is_sentiment_comment:true,Sentiment_Label: { $eq: "pos" },Brand:{$eq:"Oppo"}});
-      const count_oppo_neu = await db.collection("SmartphoneReview").countDocuments({ is_sentiment_comment:true,Sentiment_Label: { $eq: "neu" },Brand:{$eq:"Oppo"}});
-      const count_oppo_neg = await db.collection("SmartphoneReview").countDocuments({ is_sentiment_comment:true,Sentiment_Label: { $eq: "neg" },Brand:{$eq:"Oppo"}});
+      const count_oppo_pos = await db.collection("SmartphoneReview").countDocuments({ is_sentiment_comment:true,Sentiment_Label: { $eq: "pos" },Brand:{$eq:"OPPO"}});
+      const count_oppo_neu = await db.collection("SmartphoneReview").countDocuments({ is_sentiment_comment:true,Sentiment_Label: { $eq: "neu" },Brand:{$eq:"OPPO"}});
+      const count_oppo_neg = await db.collection("SmartphoneReview").countDocuments({ is_sentiment_comment:true,Sentiment_Label: { $eq: "neg" },Brand:{$eq:"OPPO"}});
       const count_samsung_pos = await db.collection("SmartphoneReview").countDocuments({ is_sentiment_comment:true,Sentiment_Label: { $eq: "pos" },Brand:{$eq:"Samsung"}});
       const count_samsung_neu = await db.collection("SmartphoneReview").countDocuments({ is_sentiment_comment:true,Sentiment_Label: { $eq: "neu" },Brand:{$eq:"Samsung"}});
       const count_samsung_neg = await db.collection("SmartphoneReview").countDocuments({ is_sentiment_comment:true,Sentiment_Label: { $eq: "neg" },Brand:{$eq:"Samsung"}});
-      const count_vivo_pos = await db.collection("SmartphoneReview").countDocuments({ is_sentiment_comment:true,Sentiment_Label: { $eq: "pos" },Brand:{$eq:"Vivo"}});
-      const count_vivo_neu = await db.collection("SmartphoneReview").countDocuments({ is_sentiment_comment:true,Sentiment_Label: { $eq: "neu" },Brand:{$eq:"Vivo"}});
-      const count_vivo_neg = await db.collection("SmartphoneReview").countDocuments({ is_sentiment_comment:true,Sentiment_Label: { $eq: "neg" },Brand:{$eq:"Vivo"}});
+      const count_vivo_pos = await db.collection("SmartphoneReview").countDocuments({ is_sentiment_comment:true,Sentiment_Label: { $eq: "pos" },Brand:{$eq:"vivo"}});
+      const count_vivo_neu = await db.collection("SmartphoneReview").countDocuments({ is_sentiment_comment:true,Sentiment_Label: { $eq: "neu" },Brand:{$eq:"vivo"}});
+      const count_vivo_neg = await db.collection("SmartphoneReview").countDocuments({ is_sentiment_comment:true,Sentiment_Label: { $eq: "neg" },Brand:{$eq:"vivo"}});
       const count_xiaomi_pos = await db.collection("SmartphoneReview").countDocuments({ is_sentiment_comment:true,Sentiment_Label: { $eq: "pos" },Brand:{$eq:"Xiaomi"}});
       const count_xiaomi_neu = await db.collection("SmartphoneReview").countDocuments({ is_sentiment_comment:true,Sentiment_Label: { $eq: "neu" },Brand:{$eq:"Xiaomi"}});
       const count_xiaomi_neg = await db.collection("SmartphoneReview").countDocuments({ is_sentiment_comment:true,Sentiment_Label: { $eq: "neg" },Brand:{$eq:"Xiaomi"}});
@@ -36,8 +36,6 @@ export default async function handler(req, res) {
       // aspect
       const countover_apple_pos = await db.collection("SmartphoneReview").countDocuments({ is_sentiment_comment:true,Sentiment_Label: { $eq: "neg" },Brand:{$eq:"Huawei"}});
 
-
-      
       await res.json(
         {
           overviews:
@@ -55,7 +53,7 @@ export default async function handler(req, res) {
               count_neu: count_apple_neu ?? 0,
               count_neg: count_apple_neg ?? 0
             },
-            Oppo:
+            OPPO:
             {
               count_pos: count_oppo_pos ?? 0,
               count_neu: count_oppo_neu ?? 0,
@@ -67,7 +65,7 @@ export default async function handler(req, res) {
               count_neu: count_samsung_neu ?? 0,
               count_neg: count_samsung_neg ?? 0
             },
-            Vivo:
+            vivo:
             {
               count_pos: count_vivo_pos ?? 0,
               count_neu: count_vivo_neu ?? 0,
