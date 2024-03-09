@@ -246,6 +246,83 @@ export default function compare() {
     }
   };
 
+  // const filterAspectBySentiment = (aspectSmartphone, selectedSentiments) => {
+  //   if (selectedSentiments !== "" && selectedSentiments !== "neu"){
+  //     return aspectSmartphone.filter(aspect => 
+  //       aspect.camera === selectedSentiments,
+  //       aspect.battery === selectedSentiments,
+  //       aspect.screen === selectedSentiments,
+  //       aspect.performance === selectedSentiments,
+  //       aspect.price === selectedSentiments)
+  //   }else {
+  //     return aspectSmartphone
+  //   }
+  //   // if (!showNeutralData && selectedSentiments !== '') {
+  //   //   return reviews.filter(review => review.Sentiment_Label !== 'neu' && review.Sentiment_Label === selectedSentiments);
+  //   // } else if (selectedSentiments !== '') {
+  //   //   return reviews.filter(review => review.Sentiment_Label === selectedSentiments);
+  //   // } else if (!showNeutralData) {
+  //   //   return reviews.filter(review => review.Sentiment_Label !== "neu");
+  //   // } else {
+  //   //   return reviews;
+  //   // }
+  // };
+
+  // const filterAspectDataBySentiment = (aspectData, selectedSentiment) => {
+  //   // Filter aspect data based on the selected sentiment
+  //   switch (selectedSentiment) {
+  //     case 'pos':
+  //       return {
+  //         camera: {
+  //           pos: aspectData.camera.pos,
+  //           neg: 0 // Assuming neg is always 0 for positive sentiment
+  //         },
+  //         battery: {
+  //           pos: aspectData.battery.pos,
+  //           neg: 0
+  //         },
+  //         screen: {
+  //           pos: aspectData.screen.pos,
+  //           neg: 0
+  //         },
+  //         performance: {
+  //           pos: aspectData.performance.pos,
+  //           neg: 0
+  //         },
+  //         price: {
+  //           pos: aspectData.price.pos,
+  //           neg: 0
+  //         }
+  //       };
+  //     case 'neg':
+  //       return {
+  //         camera: {
+  //           pos: 0, // Assuming pos is always 0 for negative sentiment
+  //           neg: aspectData.camera.neg
+  //         },
+  //         battery: {
+  //           pos: 0,
+  //           neg: aspectData.battery.neg
+  //         },
+  //         screen: {
+  //           pos: 0,
+  //           neg: aspectData.screen.neg
+  //         },
+  //         performance: {
+  //           pos: 0,
+  //           neg: aspectData.performance.neg
+  //         },
+  //         price: {
+  //           pos: 0,
+  //           neg: aspectData.price.neg
+  //         }
+  //       };
+  //     default:
+  //       // If sentiment is neutral or not recognized, return the original aspect data
+  //       return aspectData;
+  //   }
+  // };
+
   useEffect(() => {
     const fetchSmartphoneName = async (selectedBrand, setSmartphoneModels) => {
       if (selectedBrand) {
@@ -702,7 +779,7 @@ export default function compare() {
         stackBarChartAspect.destroy();
       };
     }
-  }, [aspectSm1, aspectSm2, aspectSm3, selectedModelSm1, selectedModelSm2, selectedModelSm3]);
+  }, [aspectSm1, aspectSm2, aspectSm3, selectedModelSm1, selectedModelSm2, selectedModelSm3, selectedSentiments]);
 
 
   useEffect(() => {
