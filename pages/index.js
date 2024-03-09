@@ -3,8 +3,6 @@ import Navbar from "@/components/navbar";
 import React, { useEffect, useState, useRef } from 'react';
 import { Card, Skeleton } from "@nextui-org/react";
 import { Chart } from "chart.js/auto";
-import { animals } from "./test";
-import { phones, models } from "./smartdata";
 import { Select, SelectSection, SelectItem } from "@nextui-org/react";
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 import anychart from 'anychart';
