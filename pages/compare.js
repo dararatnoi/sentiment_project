@@ -5,32 +5,43 @@ import { Autocomplete, AutocompleteItem } from "@nextui-org/react";
 import Chart from 'chart.js/auto';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 import { Select, SelectItem } from "@nextui-org/react";
-import anychart from 'anychart';
+import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, getKeyValue } from "@nextui-org/react";
 import axios from 'axios';
-// 
 
 
 export default function compare() {
-  // const [allReviews, setAllReviews] = useState([]);
   // const [statusData, setStatusData] = React.useState(false);
   // const [isLoaded, setIsLoaded] = React.useState(false);
-  const [brandsSm1, setBrandsSm1] = useState([]);
-  const [brandsSm2, setBrandsSm2] = useState([]);
+
   const [smartphoneModelsSm1, setSmartphoneModelsSm1] = useState([]);
   const [smartphoneModelsSm2, setSmartphoneModelsSm2] = useState([]);
+  const [smartphoneModelsSm3, setSmartphoneModelsSm3] = useState([]);
 
-  const [selectedBrandSm1, setSelectedBrandSm1] = useState('Apple');
-  const [selectedModelSm1, setSelectedModelSm1] = useState('Huawei nova 11i');
-  const [selectedBrandSm2, setSelectedBrandSm2] = useState('Samsung');
+  const [selectedBrandSm1, setSelectedBrandSm1] = useState('');
+  const [selectedModelSm1, setSelectedModelSm1] = useState('');
+  const [selectedBrandSm2, setSelectedBrandSm2] = useState('');
   const [selectedModelSm2, setSelectedModelSm2] = useState('');
+  const [selectedBrandSm3, setSelectedBrandSm3] = useState('');
+  const [selectedModelSm3, setSelectedModelSm3] = useState('');
+
+  const [smartphoneInfoSm1, setsmartphoneInfoSm1] = useState({});
+  const [smartphoneInfoSm2, setsmartphoneInfoSm2] = useState({});
+  const [smartphoneInfoSm3, setsmartphoneInfoSm3] = useState({});
+
+
+
   const [reviews, setReviews] = useState([]);
 
   const [selectedSentiments, setSelectedSentiments] = useState([]); // Initial value set to "Positive"
   const [filteredReviews, setFilteredReviews] = useState([]);
 
-  const sentiment_select = ["Positive", "Neutral", "Negative"];
+  const optionsSentiment = [
+    { value: 'pos', label: 'Positive' },
+    { value: 'neg', label: 'Negative' },
+    { value: 'neu', label: 'Neutral' }
+  ];
 
-
+  const brandName = ["Apple", "Samsung", "OPPO", "vivo", "Huawei", "Xiaomi"]
 
   // Helper function to determine background color based on sentiment
   const getBackgroundColor = (sentiment) => {
@@ -130,109 +141,243 @@ export default function compare() {
     }
   });
 
-  useEffect(() => {
-    // Filter reviews based on selected sentiments
-    const filtered = reviews.filter(review => {
-      if (selectedSentiments.length === 0) {
-        return true; // If no sentiment is selected, show all reviews
-      } else {
-        // Check if the review sentiment matches any of the selected sentiments
-        return selectedSentiments.some(sentiment => {
-          if (sentiment === 'Positive') {
-            // Adjust the condition based on your review structure
-            return review.positive;
-          } else if (sentiment === 'Neutral') {
-            return review.neutral;
-          } else if (sentiment === 'Negative') {
-            return review.negative;
-          }
-        });
-      }
-    });
-    setFilteredReviews(filtered);
-  }, [selectedSentiments, reviews]);
+  const [overviewSm3, setOverviewSm3] = useState({
+    pos: 0,
+    neu: 0,
+    neg: 0
+  });
 
-  // useEffect(() => {
-  //   const table = document.getElementById('dataTable');
-  //   if (table) {
-  //     const tableHeight = table.clientHeight; // Get the height of the table
-  //     const halfTableHeight = tableHeight / 2; // Calculate half the height of the table
-
-  //     // Set the height of the charts
-  //     const ovaBarChart = document.getElementById('ovaBarChart');
-  //     const fullStackBarChart = document.getElementById('fullStackBarChart');
-  //     const radarChart = document.getElementById('RadarChart');
-
-  //     if (ovaBarChart && fullStackBarChart && radarChart) {
-  //       ovaBarChart.style.height = `${halfTableHeight}px`;
-  //       fullStackBarChart.style.height = `${halfTableHeight}px`;
-  //       radarChart.style.height = `${halfTableHeight}px`;
-  //     }
-  //   }
-  // }, []);
-
-
-
-  useEffect(() => {
-    const fetchBrands = async () => {
-      try {
-        const response = await fetch('http://localhost:3000/api/compare_smartphonename');
-        const data = await response.json();
-        const brandNames = Object.keys(data);
-        setBrandsSm1(brandNames); // Corrected line
-        setBrandsSm2(brandNames); // Corrected line
-      } catch (error) {
-        console.error('Error fetching brands:', error);
-      }
-    };
-
-    fetchBrands();
-  }, []);
-
-  useEffect(() => {
-    const fetchSmartphoneModelsSm1 = async (brand) => {
-      try {
-        const response = await fetch('http://localhost:3000/api/compare_smartphonename/');
-        const data = await response.json();
-        setSmartphoneModelsSm1(Object.keys(data[brand]));
-      } catch (error) {
-        console.error(`Error fetching smartphones for ${brand}:`, error);
-      }
-    };
-    if (selectedBrandSm1) {
-      fetchSmartphoneModelsSm1(selectedBrandSm1);
+  const [aspectSm3, setAspectSm3] = useState({
+    camera: {
+      pos: 0,
+      neg: 0
+    },
+    battery: {
+      pos: 0,
+      neg: 0
+    },
+    screen: {
+      pos: 0,
+      neg: 0
+    },
+    performance: {
+      pos: 0,
+      neg: 0
+    },
+    price: {
+      pos: 0,
+      neg: 0
     }
-  }, [selectedBrandSm1]);
+  });
 
-  useEffect(() => {
-    const fetchSmartphoneModelsSm2 = async (brand) => {
-      try {
-        const response = await fetch('http://localhost:3000/api/compare_smartphonename');
-        const data = await response.json();
-        setSmartphoneModelsSm2(Object.keys(data[brand]))
-      } catch (error) {
-        console.error(`Error fetching smartphones for ${brand}:`, error);
-      }
-    };
-    if (selectedBrandSm2) {
-      fetchSmartphoneModelsSm2(selectedBrandSm2);
+  const columnsInfoData = [
+    {
+      key: "info",
+      label: "Information",
+    },
+    {
+      key: "Sm1",
+      label: selectedModelSm1,
+    },
+    {
+      key: "Sm2",
+      label: selectedModelSm2,
+    },
+    {
+      key: "Sm3",
+      label: selectedModelSm3,
+    },
+  ];
+
+  const rowsInfoData = [
+    {
+      info: "Display",
+      Sm1: smartphoneInfoSm1.display,
+      Sm2: smartphoneInfoSm2.display,
+      Sm3: smartphoneInfoSm3.display,
+    },
+    {
+      info: "Camera",
+      Sm1: smartphoneInfoSm1.camera,
+      Sm2: smartphoneInfoSm2.camera,
+      Sm3: smartphoneInfoSm3.camera,
+    },
+    {
+      info: "CPU",
+      Sm1: smartphoneInfoSm1.cpu,
+      Sm2: smartphoneInfoSm2.cpu,
+      Sm3: smartphoneInfoSm3.cpu,
+    },
+    {
+      info: "Operating System",
+      Sm1: smartphoneInfoSm1.os,
+      Sm2: smartphoneInfoSm2.os,
+      Sm3: smartphoneInfoSm3.os,
+    },
+    {
+      info: "Memory",
+      Sm1: smartphoneInfoSm1.memory,
+      Sm2: smartphoneInfoSm2.memory,
+      Sm3: smartphoneInfoSm3.memory,
+    },
+    {
+      info: "Battery",
+      Sm1: smartphoneInfoSm1.battery,
+      Sm2: smartphoneInfoSm2.battery,
+      Sm3: smartphoneInfoSm3.battery,
+    },
+  ];
+
+  const filterReviewsBySentiment = () => {
+    if (!Array.isArray(selectedSentiments) || selectedSentiments.length === 0) {
+      return reviews; // No filtering required if nothing is selected
     }
-  }, [selectedBrandSm2]);
+
+    return reviews.filter(review => selectedSentiments.includes(review.Sentiment_Label));
+  };
 
   useEffect(() => {
-    if (selectedModelSm1) {
-      const fetchData = async () => {
+    const fetchSmartphoneName = async (selectedBrand, setSmartphoneModels) => {
+      if (selectedBrand) {
         try {
-          const response = await axios.get(`/api/compare_smartphonereview?smartphone=${encodeURIComponent(selectedModelSm1)}`);
-          setReviews(response.data); // Update the state with the response data
+          const response = await axios.get(`/api/compare_smartphoneName?brandName=${encodeURIComponent(selectedBrand)}`);
+          console.log('Fetched data for', selectedBrand, response.data); // Check fetched data
+          setSmartphoneModels(response.data); // Update the state variable with fetched data
+          console.log('State updated for', selectedBrand, response.data); // Check state variable update
         } catch (error) {
           console.error('Error fetching smartphone review data:', error);
         }
-      };
-      fetchData();
-    }
-  }, [selectedModelSm1]);
+      }
+    };
 
+    if (selectedBrandSm1) {
+      fetchSmartphoneName(selectedBrandSm1, setSmartphoneModelsSm1)
+    }
+
+    if (selectedBrandSm2) {
+      fetchSmartphoneName(selectedBrandSm2, setSmartphoneModelsSm2)
+    }
+
+    if (selectedBrandSm3) {
+      fetchSmartphoneName(selectedBrandSm3, setSmartphoneModelsSm3)
+    }
+  }, [selectedBrandSm1, selectedBrandSm2, selectedBrandSm3]);
+
+  useEffect(() => {
+    const fetchReviews = async () => {
+      try {
+        const selectedSmartphones = [selectedModelSm1, selectedModelSm2, selectedModelSm3];
+        const promises = selectedSmartphones
+          .filter(model => model) // Filter out any undefined or empty models
+          .map(model => axios.get(`/api/compare_smartphoneReview?smartphone=${encodeURIComponent(model)}`));
+
+        const responses = await Promise.all(promises);
+        const reviewData = responses.map(response => response.data);
+
+        // Combine review data from all responses
+        const combinedReviews = reviewData.flat();
+
+        // Update state with combined reviews
+        setReviews(combinedReviews);
+      } catch (error) {
+        console.error('Error fetching smartphone review data:', error);
+      }
+    };
+
+    fetchReviews();
+  }, [selectedModelSm1, selectedModelSm2, selectedModelSm3]);
+
+  useEffect(() => {
+    const fetchSmartphoneSentimentData = async (smartphoneName, setOverview, setAspect) => {
+      try {
+        const response = await axios.get(`/api/compare_smartphoneSentiment?smartphone=${encodeURIComponent(smartphoneName)}`);
+        console.log("Response:", response); // Logging the response for debugging
+
+        const data = response.data; // Assuming the response is already in JSON format
+
+        const overviewData = data[smartphoneName].OverallSentiment;
+
+        setOverview({
+          pos: overviewData.count_pos || 0,
+          neu: overviewData.count_neu || 0,
+          neg: overviewData.count_neg || 0,
+        });
+
+        const aspectData = data[smartphoneName].Aspect;
+
+        setAspect({
+          camera: {
+            pos: aspectData.Camera ? aspectData.Camera.count_pos || 0 : 0,
+            neg: aspectData.Camera ? aspectData.Camera.count_neg || 0 : 0
+          },
+          battery: {
+            pos: aspectData.Battery ? aspectData.Battery.count_pos || 0 : 0,
+            neg: aspectData.Battery ? aspectData.Battery.count_neg || 0 : 0
+          },
+          screen: {
+            pos: aspectData.Screen ? aspectData.Screen.count_pos || 0 : 0,
+            neg: aspectData.Screen ? aspectData.Screen.count_neg || 0 : 0
+          },
+          performance: {
+            pos: aspectData.Performance ? aspectData.Performance.count_pos || 0 : 0,
+            neg: aspectData.Performance ? aspectData.Performance.count_neg || 0 : 0
+          },
+          price: {
+            pos: aspectData.Price ? aspectData.Price.count_pos || 0 : 0,
+            neg: aspectData.Price ? aspectData.Price.count_neg || 0 : 0
+          }
+        });
+
+      } catch (error) {
+        console.error(`Error fetching smartphones for ${smartphoneName}:`, error);
+      }
+    };
+
+    if (selectedModelSm1) {
+      fetchSmartphoneSentimentData(selectedModelSm1, setOverviewSm1, setAspectSm1);
+    }
+
+    if (selectedModelSm2) {
+      fetchSmartphoneSentimentData(selectedModelSm2, setOverviewSm2, setAspectSm2);
+    }
+
+    if (selectedModelSm3) {
+      fetchSmartphoneSentimentData(selectedModelSm3, setOverviewSm3, setAspectSm3);
+    }
+  }, [selectedModelSm1, selectedModelSm2, selectedModelSm3]);
+
+  useEffect(() => {
+    const fetchSmartphoneInfo = async (smartphoneName, setSmartphoneInfo) => {
+      if (smartphoneName) {
+        try {
+          const response = await axios.get(`/api/compare_smartphoneInfo?smartphone=${encodeURIComponent(smartphoneName)}`);
+          console.log('Fetched data for', smartphoneName, response.data); // Check fetched data
+          if (response.data.length > 0) {
+            setSmartphoneInfo(response.data[0].spec); // Update the state variable with fetched data
+          } else {
+            console.error('No data found for smartphone:', smartphoneName);
+          }
+        } catch (error) {
+          console.error('Error fetching smartphone review data:', error);
+        }
+      }
+    };
+
+    if (selectedModelSm1) {
+      fetchSmartphoneInfo(selectedModelSm1, setsmartphoneInfoSm1)
+    }
+
+    if (selectedModelSm2) {
+      fetchSmartphoneInfo(selectedModelSm2, setsmartphoneInfoSm2)
+    }
+
+    if (selectedModelSm3) {
+      fetchSmartphoneInfo(selectedModelSm3, setsmartphoneInfoSm3)
+    }
+  }, [selectedModelSm1, selectedModelSm2, selectedModelSm3]);
+
+
+  ////////////////////////// Chart ////////////////////////
 
   useEffect(() => {
     const rdChartElement = document.getElementById('RadarChart');
@@ -248,7 +393,7 @@ export default function compare() {
         return total + aspectItem.pos;
       }, 0);
 
-      const rdChartData = {
+      let rdChartData = {
         labels: ["Camera", "Battery", "Screen", "Performance", "Price"],
         datasets: [{
           label: selectedModelSm1,
@@ -273,9 +418,28 @@ export default function compare() {
           ],
           backgroundColor: 'rgb(104, 149, 210, 0.2)',
           borderColor: 'rgb(104, 149, 210)'
-        }
-        ]
+        }]
       };
+
+      // Check if selectedModelSm3 is selected
+      if (selectedModelSm3) {
+        const totalPosScoreSm3 = Object.values(aspectSm3).reduce((total, aspectItem) => {
+          return total + aspectItem.pos;
+        }, 0);
+
+        rdChartData.datasets.push({
+          label: selectedModelSm3,
+          data: [
+            (aspectSm3.camera.pos / totalPosScoreSm3) * 10,
+            (aspectSm3.battery.pos / totalPosScoreSm3) * 10,
+            (aspectSm3.screen.pos / totalPosScoreSm3) * 10,
+            (aspectSm3.performance.pos / totalPosScoreSm3) * 10,
+            (aspectSm3.price.pos / totalPosScoreSm3) * 10
+          ],
+          backgroundColor: 'rgb(104, 149, 210, 0.2)',
+          borderColor: 'rgb(104, 149, 210)'
+        });
+      }
 
       const rdChartContext = rdChartElement.getContext('2d');
       // Create the radar chart
@@ -316,158 +480,13 @@ export default function compare() {
         RadarChart.destroy();
       };
     }
-  }, [aspectSm1, selectedModelSm1, aspectSm2, selectedModelSm2]);
-
-
-  // useEffect(() => {
-  //   const fetchSmartphoneDataSm1 = async (brand, smartphoneName) => {
-  //     try {
-  //       const response = await fetch('http://localhost:3000/api/compare_smartphonename');
-  //       const data = await response.json();
-
-  //       // Setting overview state for smartphone 1
-  //       setOverviewSm1({
-  //         pos: data[brand][smartphoneName].OverallSentiment.count_pos,
-  //         neu: data[brand][smartphoneName].OverallSentiment.count_neu,
-  //         neg: data[brand][smartphoneName].OverallSentiment.count_neg,
-  //       });
-
-  //       // Setting aspect state for smartphone 1
-  //       setAspectSm1({
-  //         camera: {
-  //           pos: data[brand][smartphoneName].Aspect.Camera.count_pos,
-  //           neg: data[brand][smartphoneName].Aspect.Camera.count_neg
-  //         },
-  //         battery: {
-  //           pos: data[brand][smartphoneName].Aspect.Battery.count_pos,
-  //           neg: data[brand][smartphoneName].Aspect.Battery.count_neg
-  //         },
-  //         screen: {
-  //           pos: data[brand][smartphoneName].Aspect.Screen.count_pos,
-  //           neg: data[brand][smartphoneName].Aspect.Screen.count_neg
-  //         },
-  //         performance: {
-  //           pos: data[brand][smartphoneName].Aspect.Performance.count_pos,
-  //           neg: data[brand][smartphoneName].Aspect.Performance.count_neg
-  //         },
-  //         price: {
-  //           pos: data[brand][smartphoneName].Aspect.Price.count_pos,
-  //           neg: data[brand][smartphoneName].Aspect.Price.count_neg
-  //         }
-  //       });
-
-  //     } catch (error) {
-  //       console.error(`Error fetching smartphones for ${brand}:`, error);
-  //     }
-  //   };
-  //   if (selectedModelSm1) {
-  //     fetchSmartphoneDataSm1(selectedBrandSm1, selectedModelSm1);
-  //   }
-  // }, [selectedBrandSm1, selectedModelSm1]);
-
-  // useEffect(() => {
-  //   const fetchSmartphoneDataSm2 = async (brand, smartphoneName) => {
-  //     try {
-  //       const response = await fetch('http://localhost:3000/api/compare_smartphonename');
-  //       const data = await response.json();
-
-  //       // Setting overview state for smartphone 1
-  //       setOverviewSm2({
-  //         pos: data[brand][smartphoneName].OverallSentiment.count_pos,
-  //         neu: data[brand][smartphoneName].OverallSentiment.count_neu,
-  //         neg: data[brand][smartphoneName].OverallSentiment.count_neg,
-  //       });
-
-  //       // Setting aspect state for smartphone 1
-  //       setAspectSm2({
-  //         camera: {
-  //           pos: data[brand][smartphoneName].Aspect.Camera.count_pos,
-  //           neg: data[brand][smartphoneName].Aspect.Camera.count_neg
-  //         },
-  //         battery: {
-  //           pos: data[brand][smartphoneName].Aspect.Battery.count_pos,
-  //           neg: data[brand][smartphoneName].Aspect.Battery.count_neg
-  //         },
-  //         screen: {
-  //           pos: data[brand][smartphoneName].Aspect.Screen.count_pos,
-  //           neg: data[brand][smartphoneName].Aspect.Screen.count_neg
-  //         },
-  //         performance: {
-  //           pos: data[brand][smartphoneName].Aspect.Performance.count_pos,
-  //           neg: data[brand][smartphoneName].Aspect.Performance.count_neg
-  //         },
-  //         price: {
-  //           pos: data[brand][smartphoneName].Aspect.Price.count_pos,
-  //           neg: data[brand][smartphoneName].Aspect.Price.count_neg
-  //         }
-  //       });
-
-  //     } catch (error) {
-  //       console.error(`Error fetching smartphones for ${brand}:`, error);
-  //     }
-  //   };
-  //   if (selectedModelSm2) {
-  //     fetchSmartphoneDataSm2(selectedBrandSm2, selectedModelSm2);
-  //   }
-  // }, [selectedBrandSm2, selectedModelSm2]);
-
-  useEffect(() => {
-    const fetchSmartphoneData = async (brand, smartphoneName, setOverview, setAspect) => {
-      try {
-        const response = await fetch('http://localhost:3000/api/compare_smartphonename');
-        const data = await response.json();
-
-        const overviewData = data[brand][smartphoneName].OverallSentiment;
-
-        setOverview({
-          pos: overviewData.count_pos || 0,
-          neu: overviewData.count_neu || 0,
-          neg: overviewData.count_neg || 0,
-        });
-
-        const aspectData = data[brand][smartphoneName].Aspect;
-
-        setAspect({
-          camera: {
-            pos: aspectData.Camera ? aspectData.Camera.count_pos || 0 : 0,
-            neg: aspectData.Camera ? aspectData.Camera.count_neg || 0 : 0
-          },
-          battery: {
-            pos: aspectData.Battery ? aspectData.Battery.count_pos || 0 : 0,
-            neg: aspectData.Battery ? aspectData.Battery.count_neg || 0 : 0
-          },
-          screen: {
-            pos: aspectData.Screen ? aspectData.Screen.count_pos || 0 : 0,
-            neg: aspectData.Screen ? aspectData.Screen.count_neg || 0 : 0
-          },
-          performance: {
-            pos: aspectData.Performance ? aspectData.Performance.count_pos || 0 : 0,
-            neg: aspectData.Performance ? aspectData.Performance.count_neg || 0 : 0
-          },
-          price: {
-            pos: aspectData.Price ? aspectData.Price.count_pos || 0 : 0,
-            neg: aspectData.Price ? aspectData.Price.count_neg || 0 : 0
-          }
-        });
-
-      } catch (error) {
-        console.error(`Error fetching smartphones for ${brand}:`, error);
-      }
-    };
-
-    if (selectedModelSm1) {
-      fetchSmartphoneData(selectedBrandSm1, selectedModelSm1, setOverviewSm1, setAspectSm1);
-    }
-
-    if (selectedModelSm2) {
-      fetchSmartphoneData(selectedBrandSm2, selectedModelSm2, setOverviewSm2, setAspectSm2);
-    }
-  }, [selectedBrandSm1, selectedModelSm1, selectedBrandSm2, selectedModelSm2]);
+  }, [aspectSm1, selectedModelSm1, aspectSm2, selectedModelSm2, aspectSm3, selectedModelSm3]);
 
 
   useEffect(() => {
     const totalOverviewSm1 = overviewSm1.pos + overviewSm1.neu + overviewSm1.neg
     const totalOverviewSm2 = overviewSm2.pos + overviewSm2.neu + overviewSm2.neg
+    const totalOverviewSm3 = overviewSm3.pos + overviewSm3.neu + overviewSm3.neg
 
     // Convert counts to percentages
     const positivePercentageSm1 = (overviewSm1.pos / totalOverviewSm1) * 100;
@@ -478,9 +497,24 @@ export default function compare() {
     const neutralPercentageSm2 = (overviewSm2.neu / totalOverviewSm2) * 100;
     const negativePercentageSm2 = (overviewSm2.neg / totalOverviewSm2) * 100;
 
+    let labels = [selectedModelSm1, selectedModelSm2];
+    let positiveData = [positivePercentageSm1, positivePercentageSm2];
+    let neutralData = [neutralPercentageSm1, neutralPercentageSm2];
+    let negativeData = [negativePercentageSm1, negativePercentageSm2];
+
+    if (selectedModelSm3) {
+      labels.push(selectedModelSm3);
+      const positivePercentageSm3 = (overviewSm3.pos / totalOverviewSm3) * 100;
+      const neutralPercentageSm3 = (overviewSm3.neu / totalOverviewSm3) * 100;
+      const negativePercentageSm3 = (overviewSm3.neg / totalOverviewSm3) * 100;
+
+      positiveData.push(positivePercentageSm3);
+      neutralData.push(neutralPercentageSm3);
+      negativeData.push(negativePercentageSm3);
+    }
+
     const stBarChartElement = document.getElementById('fullStackBarChart');
     if (stBarChartElement) {
-
       stBarChartElement.width = stBarChartElement.parentElement.offsetWidth;
       stBarChartElement.height = stBarChartElement.parentElement.offsetHeight;
       const stBarChartContext = stBarChartElement.getContext('2d');
@@ -489,25 +523,24 @@ export default function compare() {
         type: 'bar',
         plugins: [ChartDataLabels],
         data: {
-          labels: [selectedModelSm1, selectedModelSm2], // Labels for the categories
+          labels: labels,
           datasets: [{
             label: 'Positive',
-            data: [positivePercentageSm1, positivePercentageSm2], // Adjust your data here (e.g., 300 for Category A, 500 for Category B)
-            backgroundColor: 'rgba(75, 192, 192, 0.5)', // Adjust colors as needed
-            stack: 'Stack 1' // Stack name for stacking
-          }, { // Labels for the categories
+            data: positiveData,
+            backgroundColor: 'rgba(75, 192, 192, 0.5)',
+            stack: 'Stack 1'
+          }, {
             label: 'Neutral',
-            data: [neutralPercentageSm1, neutralPercentageSm2], // Adjust your data here (e.g., 300 for Category A, 500 for Category B)
-            backgroundColor: 'rgba(255, 205, 86, 0.5)', // Adjust colors as needed
-            stack: 'Stack 1' // Stack name for stacking
+            data: neutralData,
+            backgroundColor: 'rgba(255, 205, 86, 0.5)',
+            stack: 'Stack 1'
           }, {
             label: 'Negative',
-            data: [negativePercentageSm1, negativePercentageSm2], // Adjust your data here (e.g., 500 for Category A, 200 for Category B)
-            backgroundColor: 'rgba(255, 99, 132, 0.5)', // Adjust colors as needed
-            stack: 'Stack 1' // Stack name for stacking
+            data: negativeData,
+            backgroundColor: 'rgba(255, 99, 132, 0.5)',
+            stack: 'Stack 1'
           }]
         },
-        // plugins: ['datalabels'],
         options: {
           plugins: {
             title: {
@@ -532,12 +565,12 @@ export default function compare() {
                 if (value > 0) {
                   return value.toFixed(0) + '%';
                 } else {
-                  return ''; // Return empty string if value is 0
+                  return '';
                 }
               }
             }
           },
-          indexAxis: 'y', // Change to horizontal orientation
+          indexAxis: 'y',
           responsive: true,
           scales: {
             x: {
@@ -566,45 +599,42 @@ export default function compare() {
         stackBarChart.destroy();
       };
     }
-  }, [overviewSm1.pos, overviewSm1.neu, overviewSm1.neg, overviewSm2.pos, overviewSm2.neu, overviewSm2.neg]);
+  }, [overviewSm1.pos, overviewSm1.neu, overviewSm1.neg, overviewSm2.pos, overviewSm2.neu, overviewSm2.neg, overviewSm3.pos, overviewSm3.neu, overviewSm3.neg, selectedModelSm1, selectedModelSm2, selectedModelSm3]);
+
 
   useEffect(() => {
-    // const totalOverviewSm1 = overviewSm1.pos + overviewSm1.neu + overviewSm1.neg
-    // const totalOverviewSm2 = overviewSm2.pos + overviewSm2.neu + overviewSm2.neg
-
-    // // Convert counts to percentages
-    // const positivePercentageSm1 = (overviewSm1.pos / totalOverviewSm1) * 100;
-    // const neutralPercentageSm1 = (overviewSm1.neu / totalOverviewSm1) * 100;
-    // const negativePercentageSm1 = (overviewSm1.neg / totalOverviewSm1) * 100;
-
-    // const positivePercentageSm2 = (overviewSm2.pos / totalOverviewSm2) * 100;
-    // const neutralPercentageSm2 = (overviewSm2.neu / totalOverviewSm2) * 100;
-    // const negativePercentageSm2 = (overviewSm2.neg / totalOverviewSm2) * 100;
-
     const stBarChartAspectElement = document.getElementById('fullStackBarChartAspect');
     if (stBarChartAspectElement) {
       stBarChartAspectElement.width = stBarChartAspectElement.parentElement.offsetWidth;
       stBarChartAspectElement.height = stBarChartAspectElement.parentElement.offsetHeight;
       const stBarChartAspectContext = stBarChartAspectElement.getContext('2d');
 
+      let datasets = [{
+        label: selectedModelSm1,
+        data: [aspectSm1.camera.pos, aspectSm1.battery.pos, aspectSm1.screen.pos, aspectSm1.performance.pos, aspectSm1.price.pos],
+        backgroundColor: 'rgb(208, 72, 72, 0.5)'
+      }, {
+        label: selectedModelSm2,
+        data: [aspectSm2.camera.pos, aspectSm2.battery.pos, aspectSm2.screen.pos, aspectSm2.performance.pos, aspectSm2.price.pos],
+        backgroundColor: 'rgb(104, 149, 210, 0.5)'
+      }];
+
+      // Add dataset for selectedModelSm3 if it is selected
+      if (selectedModelSm3) {
+        datasets.push({
+          label: selectedModelSm3,
+          data: [aspectSm3.camera.pos, aspectSm3.battery.pos, aspectSm3.screen.pos, aspectSm3.performance.pos, aspectSm3.price.pos],
+          backgroundColor: 'rgb(104, 149, 210, 0.5)'
+        });
+      }
+
       let stackBarChartAspect = new Chart(stBarChartAspectContext, {
         type: 'bar',
         plugins: [ChartDataLabels],
         data: {
-          labels: ["Camera", "Battery", "Screen", "Performance", "Price"], // Labels for the categories
-          datasets: [{
-            label: selectedModelSm1,
-            data: [aspectSm1.camera.pos, aspectSm1.battery.pos, aspectSm1.screen.pos, aspectSm1.performance.pos, aspectSm1.price.pos], // Adjust your data here (e.g., 300 for Category A, 500 for Category B)
-            backgroundColor: 'rgb(208, 72, 72, 0.5)'
-            // stack: 'Stack 1' // Stack name for stacking
-          }, { // Labels for the categories
-            label: selectedModelSm2,
-            data: [aspectSm2.camera.pos, aspectSm2.battery.pos, aspectSm2.screen.pos, aspectSm2.performance.pos, aspectSm2.price.pos], // Adjust your data here (e.g., 300 for Category A, 500 for Category B)
-            backgroundColor: 'rgb(104, 149, 210, 0.5)',
-            // stack: 'Stack 1' // Stack name for stacking
-          }]
+          labels: ["Camera", "Battery", "Screen", "Performance", "Price"],
+          datasets: datasets
         },
-        // plugins: ['datalabels'],
         options: {
           plugins: {
             title: {
@@ -624,17 +654,16 @@ export default function compare() {
                 size: 10
               },
               formatter: (value, context) => {
-                return value; // Return the value to display on the chart
+                return value;
               }
             }
           },
-          // indexAxis: 'y', // Change to horizontal orientation
           responsive: true,
           scales: {
             x: {
               ticks: {
                 font: {
-                  size: 11 // Set font size for the x-axis labels
+                  size: 11
                 }
               }
             },
@@ -643,48 +672,52 @@ export default function compare() {
             }
           }
         }
-
       });
+
       return () => {
         stackBarChartAspect.destroy();
       };
     }
-  }, [aspectSm1, aspectSm2]);
+  }, [aspectSm1, aspectSm2, aspectSm3, selectedModelSm1, selectedModelSm2, selectedModelSm3]);
+
 
   useEffect(() => {
-    const totalOverviewPosSm1 = overviewSm1.pos
-    const totalOverviewPosSm2 = overviewSm2.pos
-    const totalOverviewNeuSm1 = overviewSm1.neu
-    const totalOverviewNeuSm2 = overviewSm2.neu
-    const totalOverviewNegSm1 = overviewSm1.neg
-    const totalOverviewNegSm2 = overviewSm2.neg
-
     const ovaBarChartElement = document.getElementById('ovaBarChart');
     if (ovaBarChartElement) {
       ovaBarChartElement.width = ovaBarChartElement.parentElement.offsetWidth;
       ovaBarChartElement.height = ovaBarChartElement.parentElement.offsetHeight;
       const ovaBarChartContext = ovaBarChartElement.getContext('2d');
 
+      let labels = [selectedModelSm1, selectedModelSm2];
+
+      let datasets = [{
+        label: 'Positive',
+        data: [overviewSm1.pos, overviewSm2.pos],
+        backgroundColor: 'rgba(75, 192, 192, 0.5)',
+      }, {
+        label: 'Neutral',
+        data: [overviewSm1.neu, overviewSm2.neu],
+        backgroundColor: 'rgba(255, 205, 86, 0.5)',
+      }, {
+        label: 'Negative',
+        data: [overviewSm1.neg, overviewSm2.neg],
+        backgroundColor: 'rgba(255, 99, 132, 0.5)',
+      }];
+
+      if (selectedModelSm3) {
+        labels.push(selectedModelSm3);
+        datasets[0].data.push(overviewSm3.pos);
+        datasets[1].data.push(overviewSm3.neu);
+        datasets[2].data.push(overviewSm3.neg);
+      }
+
       let overallBarChart = new Chart(ovaBarChartContext, {
         type: 'bar',
         plugins: [ChartDataLabels],
         data: {
-          labels: [selectedModelSm1, selectedModelSm2], // Labels for the categories
-          datasets: [{
-            label: 'Positive',
-            data: [totalOverviewPosSm1, totalOverviewPosSm2], // Adjust your data here (e.g., 300 for Category A, 500 for Category B)
-            backgroundColor: 'rgba(75, 192, 192, 0.5)', // Adjust colors as needed
-          }, { // Labels for the categories
-            label: 'Neutral',
-            data: [totalOverviewNeuSm1, totalOverviewNeuSm2], // Adjust your data here (e.g., 300 for Category A, 500 for Category B)
-            backgroundColor: 'rgba(255, 205, 86, 0.5)', // Adjust colors as needed
-          }, {
-            label: 'Negative',
-            data: [totalOverviewNegSm1, totalOverviewNegSm2], // Adjust your data here (e.g., 500 for Category A, 200 for Category B)
-            backgroundColor: 'rgba(255, 99, 132, 0.5)', // Adjust colors as needed
-          }]
+          labels: labels,
+          datasets: datasets
         },
-        // plugins: ['datalabels'],
         options: {
           plugins: {
             title: {
@@ -726,265 +759,14 @@ export default function compare() {
             }
           }
         }
-
       });
       return () => {
         overallBarChart.destroy();
       };
     }
-
-  }, [overviewSm1.pos, overviewSm1.neu, overviewSm1.neg, overviewSm2.pos, overviewSm2.neu, overviewSm2.neg]);
-
-  // useEffect(() => {
-  //   anychart.onDocumentReady(function () {
-  //     var datacloud = [
-  //       { x: 'กล้องดีมาก', value: 80 },
-  //       { x: 'แบต', value: 56 },
-  //       { x: 'ห่วยแตก', value: 44 },
-  //       { x: 'แพงมาก', value: 40 },
-  //       { x: 'สวยงาม', value: 36 },
-  //       { x: 'ยอดเยี่ยม', value: 32 },
-  //       { x: 'ดีมาก', value: 28 },
-  //       { x: 'แนะนำ', value: 24 },
-  //       { x: 'ใช้งานได้ดี', value: 20 },
-  //       { x: 'หน้าจอห่วย', value: 12 },
-  //       { x: 'หล้องไม่ชัด', value: 12 }
-  //     ];
-
-  //     var chart = anychart.tagCloud();
-  //     chart.data(datacloud)
-  //     chart.container('wordCloudOverall');
-  //     chart.title('TAG CLOUDS-ALL SENTIMENT');
-  //     chart.normal().fontFamily('Kanit');
-  //     chart.hovered().fontFamily('Kanit');
-  //     chart.mode("spiral");
-
-  //     chart.draw();
-  //   });
-  // }, []);
-
-  // useEffect(() => {
-  //   setStatusData(false)
-  //   setIsLoaded(false); // Set loading state before fetching data
-  //   const fetchData = async () => {
-  //     let res = await fetch("http://localhost:3000/api/smartphonereview", {
-  //       method: "GET",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //       },
-  //     });
-  //     let data = await res.json();
-  //     // Do something with allPosts, like setting state
-  //     setAllReviews(data);
-
-  //     setStatusData(true);
-  //     setIsLoaded(true); // Set loading state after fetching data
-  //   };
-
-  //   fetchData();
-
-  //   const sentimentPosPercentage = 70;
-  //   const sentimentNeuPercentage = 20;
-  //   const sentimentNegPercentage = 10;
-  //   const allPercentage = sentimentPosPercentage + sentimentNeuPercentage + sentimentNegPercentage;
-
-  //   // Sample data for positive sentiment
-  //   var PositiveData = {
-  //     labels: ["Positive Sentiment"],
-  //     datasets: [{
-  //       data: [sentimentPosPercentage, allPercentage - sentimentPosPercentage],
-  //       backgroundColor: [
-  //         'rgba(34, 139, 34, 0.9)', // Positive
-  //         'rgba(34, 139, 34, 0.3)' // Negative
-  //       ],
-  //       borderColor: [
-  //         'rgba(34, 139, 34, 1)',
-  //         'rgba(34, 139, 34, 0.3)' // Negative
-  //       ],
-  //       borderWidth: 1
-  //     }]
-  //   };
-
-  //   var NeutralData = {
-  //     labels: ["Neutral Sentiment"],
-  //     datasets: [{
-  //       data: [sentimentNeuPercentage, allPercentage - sentimentNeuPercentage], // Example data for positive sentiment, you should replace it with your own
-  //       backgroundColor: [
-  //         'rgba(244, 187, 68, 9)', // Positive
-  //         'rgba(244, 187, 68, 0.3)' // Negative
-  //       ],
-  //       borderColor: [
-  //         'rgba(244, 187, 68, 1)',
-  //         'rgba(244, 187, 68, 0.3)' // Negative
-  //       ],
-  //       borderWidth: 1
-  //     }]
-  //   };
-
-  //   var NegativeData = {
-  //     labels: ["Negative Sentiment"],
-  //     datasets: [{
-  //       data: [sentimentNegPercentage, allPercentage - sentimentNegPercentage], // Example data for positive sentiment, you should replace it with your own
-  //       backgroundColor: [
-  //         'rgba(210, 43, 43, 9)', // Positive
-  //         'rgba(210, 43, 43, 0.3)' // Negative
-  //       ],
-  //       borderColor: [
-  //         'rgba(210, 43, 43, 1)',
-  //         'rgba(210, 43, 43, 0.3)' // Negative
-  //       ],
-  //       borderWidth: 1
-  //     }]
-  //   };
+  }, [overviewSm1.pos, overviewSm1.neu, overviewSm1.neg, overviewSm2.pos, overviewSm2.neu, overviewSm2.neg, overviewSm3.pos, overviewSm3.neu, overviewSm3.neg, selectedModelSm3]);
 
 
-
-  //   const doughnutLabelNeg = {
-  //     id: 'doughnutLabelNeg',
-  //     beforeDraw(chart) {
-  //       const {
-  //         ctx,
-  //         chartArea,
-  //         config
-  //       } = chart;
-  //       const {
-  //         datasets
-  //       } = config.data;
-  //       const total = datasets.reduce((acc, dataset) => acc + dataset.data.reduce((a, b) => a + b, 0), 0);
-  //       const negativePercentage = ((datasets[0].data[0] / total) * 100) + '%';
-  //       const centerX = (chartArea.left + chartArea.right) / 2;
-  //       const centerY = (chartArea.top + chartArea.bottom) / 2;
-
-  //       ctx.font = 'bold 20px san-serif';
-  //       ctx.fillStyle = 'rgba(210, 43, 43, 1)';
-  //       ctx.textAlign = 'center';
-  //       ctx.textBaseline = 'middle';
-  //       ctx.fillText(negativePercentage, centerX, centerY);
-  //     }
-  //   };
-
-  //   const doughnutLabelPos = {
-  //     id: 'doughnutLabelPos',
-  //     beforeDraw(chart) {
-  //       const {
-  //         ctx,
-  //         chartArea,
-  //         config
-  //       } = chart;
-  //       const {
-  //         datasets
-  //       } = config.data;
-  //       const total = datasets.reduce((acc, dataset) => acc + dataset.data.reduce((a, b) => a + b, 0), 0);
-  //       const positivePercentage = ((datasets[0].data[0] / total) * 100) + '%';
-  //       const centerX = (chartArea.left + chartArea.right) / 2;
-  //       const centerY = (chartArea.top + chartArea.bottom) / 2;
-
-  //       ctx.font = 'bold 20px san-serif';
-  //       ctx.fillStyle = 'rgba(34, 139, 34, 1)';
-  //       ctx.textAlign = 'center';
-  //       ctx.textBaseline = 'middle';
-  //       ctx.fillText(positivePercentage, centerX, centerY);
-  //     }
-  //   };
-
-  //   const doughnutLabelNeu = {
-  //     id: 'doughnutLabelNeu',
-  //     beforeDraw(chart) {
-  //       const {
-  //         ctx,
-  //         chartArea,
-  //         config
-  //       } = chart;
-  //       const {
-  //         datasets
-  //       } = config.data;
-  //       const total = datasets.reduce((acc, dataset) => acc + dataset.data.reduce((a, b) => a + b, 0), 0);
-  //       const neutralPercentage = ((datasets[0].data[0] / total) * 100) + '%';
-  //       const centerX = (chartArea.left + chartArea.right) / 2;
-  //       const centerY = (chartArea.top + chartArea.bottom) / 2;
-
-  //       ctx.font = 'bold 20px san-serif';
-  //       ctx.fillStyle = 'rgba(244, 187, 68, 1)';
-  //       ctx.textAlign = 'center';
-  //       ctx.textBaseline = 'middle';
-  //       ctx.fillText(neutralPercentage, centerX, centerY);
-  //     }
-  //   };
-
-  //   const dnPos = document.getElementById('doughnutChartPosP1').getContext('2d');
-  //   // Create the doughnut chart for positive sentiment
-  //   let doughnutChartPosP1 = new Chart(dnPos, {
-  //     type: 'doughnut',
-  //     data: PositiveData,
-  //     options: {
-  //       responsive: true,
-  //       maintainAspectRatio: false,
-  //       plugins: {
-  //         legend: false
-  //       },
-  //       layout: {
-  //         padding: {
-  //           left: 15,
-  //           right: 15,
-  //           top: 0,
-  //           bottom: 0
-  //         }
-  //       }
-  //     },
-  //     plugins: [doughnutLabelPos]
-  //   });
-
-  //   const dnNeu = document.getElementById('doughnutChartNeuP1').getContext('2d');
-  //   let doughnutChartNeuP1 = new Chart(dnNeu, {
-  //     type: 'doughnut',
-  //     data: NeutralData,
-  //     options: {
-  //       responsive: true,
-  //       maintainAspectRatio: false,
-  //       plugins: {
-  //         legend: false
-  //       },
-  //       layout: {
-  //         padding: {
-  //           left: 15,
-  //           right: 15,
-  //           top: 0,
-  //           bottom: 0
-  //         }
-  //       }
-  //     },
-  //     plugins: [doughnutLabelNeu]
-  //   });
-
-  //   const dnNeg = document.getElementById('doughnutChartNegP1').getContext('2d');
-  //   let doughnutChartNegP1 = new Chart(dnNeg, {
-  //     type: 'doughnut',
-  //     data: NegativeData,
-  //     options: {
-  //       responsive: true,
-  //       maintainAspectRatio: false,
-  //       plugins: {
-  //         legend: false
-  //       },
-  //       layout: {
-  //         padding: {
-  //           left: 15,
-  //           right: 15,
-  //           top: 0,
-  //           bottom: 0
-  //         }
-  //       }
-  //     },
-  //     plugins: [doughnutLabelNeg]
-  //   });
-
-  //   return () => {
-  //     doughnutChartPosP1.destroy();
-  //     doughnutChartNeuP1.destroy();
-  //     doughnutChartNegP1.destroy();
-  //   };
-
-  // }, []);
 
   return (
     <>
@@ -993,31 +775,16 @@ export default function compare() {
           background-color: #f0f0f0;
         }
       `}</style>
-
       <Navbar />
-      {selectedSentiments}
-      {/* {selectedModelSm1} */}
-      {/* <>Brand: {selectedBrandSm1}</><br></br>
-      <>smartphonename: {selectedModelSm1}</><br></br>
-      <>count_pos: {overviewSm1.pos}</><br></br>
-      <>aspect: {aspectSm1.camera.pos} -- {aspectSm1.battery.pos} -- {aspectSm1.screen.pos} -- {aspectSm1.performance.pos} -- {aspectSm1.price.pos}</>
-
-
-      <br></br>---------------------<br></br>
-      <>Brand: {selectedBrandSm2}</><br></br>
-      <>smartphonename: {selectedModelSm2}</><br></br>
-      <>count_pos: {overviewSm2.pos}</><br></br>
-      <>aspect: {aspectSm2.camera.pos} -- {aspectSm2.battery.pos} -- {aspectSm2.screen.pos} -- {aspectSm2.performance.pos} -- {aspectSm2.price.pos}</> */}
       <div className="md:container md:mx-auto mt-3">
-        <div className="grid grid-cols-3 gap-4">
-          {/* Select Brand */}
+        <div className="grid grid-cols-3 gap-3">
           <div className="grid grid-cols-5 gap-2">
             <div id="SelectBrandElm1" className="col-span-2 bg-white rounded-[12px]">
               <Autocomplete
                 isRequired
                 variant="bordered"
                 label="Select Brand"
-                items={brandsSm1.map(brand => ({ label: brand, value: brand }))}
+                items={brandName.map(brand => ({ label: brand, value: brand }))}
                 selectedKey={selectedBrandSm1}
                 onSelectionChange={setSelectedBrandSm1}
                 className="max-w-xs"
@@ -1050,7 +817,7 @@ export default function compare() {
                 isRequired
                 variant="bordered"
                 label="Select Brand"
-                items={brandsSm2.map(brand => ({ label: brand, value: brand }))}
+                items={brandName.map(brand => ({ label: brand, value: brand }))}
                 selectedKey={selectedBrandSm2}
                 onSelectionChange={setSelectedBrandSm2}
                 className="max-w-xs"
@@ -1082,23 +849,22 @@ export default function compare() {
               <Autocomplete
                 variant="bordered"
                 label="Select Brand"
-                items={brandsSm2.map(brand => ({ label: brand, value: brand }))}
-                // selectedKey={selectedBrandSm2}
-                // onSelectionChange={setSelectedBrandSm2}
+                items={brandName.map(brand => ({ label: brand, value: brand }))}
+                selectedKey={selectedBrandSm3}
+                onSelectionChange={setSelectedBrandSm3}
                 className="max-w-xs"
               >
                 {(item) => <AutocompleteItem key={item.value}>{item.label}</AutocompleteItem>}
               </Autocomplete>
             </div>
 
-            {/* Select Smartphones */}
             <div id="SelectSmartphoneElm3" className="col-span-3 bg-white rounded-[12px]">
               <Autocomplete
                 variant="bordered"
                 label="Select Smartphone"
-                items={smartphoneModelsSm2.map(model => ({ label: model, value: model }))}
-                // selectedKey={selectedModelSm2}
-                // onSelectionChange={setSelectedModelSm2}
+                items={smartphoneModelsSm3.map(model => ({ label: model, value: model }))}
+                selectedKey={selectedModelSm3}
+                onSelectionChange={setSelectedModelSm3}
                 // disabled={!selectedBrand}
                 className="max-w-xs"
                 multiple
@@ -1110,97 +876,135 @@ export default function compare() {
 
         </div>
       </div>
-
-      <div className="md:container md:mx-auto md:mt-1 m-h-screen">
-        <div className="grid grid-cols-11 gap-3">
-          <div className="col-span-5 grid grid-cols-5">
-            <div className="my-2 md:col-start-4 md:col-span-1 flex justify-end bg-white rounded-[12px]">
-              <Select
-                variant="bordered"
-                // label="Filter Sentiment"
-                selectionMode="multiple"
-                placeholder="Aspect"
-                selectedKeys={selectedSentiments}
-                onSelectionChange={setSelectedSentiments}
-              >
-                {sentiment_select.map((item) => (
-                  <SelectItem key={item} value={item}>
-                    {item}
-                  </SelectItem>
-                ))}
-              </Select>
-            </div>
-            <div className="col-span-5 overflow-y-auto shadow-md p-2 my-2 bg-white max-h-screen" style={{ borderRadius: "20px" }}>
-              <table id="dataTable" className="m-h-screen md:w-full md:h-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 px-5">
-                <thead>
-                  <tr>
-                    <th scope="col" className="pl-5 py-3" style={{ color: "#9AA5B0", width: "10px" }}>
-                    </th>
-                    <th scope="col" className="px-2 py-3" style={{ color: "#9AA5B0" }}>Review
-                    </th>
-                    <th scope="col" className="px-2 py-3" style={{ color: "#9AA5B0", width: "120px" }}>
-                      Model
-                    </th>
-                    <th scope="col" className="px-4 py-3" style={{ color: "#9AA5B0", width: "30px" }}>
-                      Sentiment
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {filteredReviews.map((review, index) => (
-                    <tr key={index}>
-                      <th scope="row" className="pl-5 pr-4 py-3 font-medium text-gray-500 whitespace-nowrap dark:text-white">
-                        {index + 1}
-                      </th>
-                      <td className="px-2 py-2">
-                        {review.textDisplay}
-                      </td>
-                      <td className="px-2 py-2">
-                        {review.smartphoneName}
-                      </td>
-                      <td className="px-4 py-3">
-                        <span style={{
-                          padding: "3px",
-                          border: "1px solid #DCF4E7",
-                          borderRadius: "5px",
-                          backgroundColor: getBackgroundColor(review.Sentiment_Label),
-                          color: getTextColor(review.Sentiment_Label),
-                          display: 'inline-block',
-                          padding: '4px 4px'
-                        }}>
-                          {getSentimentText(review.Sentiment_Label)}
-                        </span>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-          <div className="col-span-6">
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                {/* <div id="wordCloudOverall" className="bg-white rounded-[20px] md:p-4 md:mx-2 md:my-2">Positive WordCloud</div>
-                <div className="bg-white rounded-[20px] md:p-4 md:mx-2 md:my-2">Negative WordCloud</div> */}
-                <div className="bg-white shadow-md rounded-[20px] md:p-3 md:my-3 w-full h-full" style={{ maxHeight: "45vh" }}>
-                  <canvas id="ovaBarChart">barchart</canvas>
-                </div>
-                <div className="bg-white shadow-md rounded-[20px] md:p-3 md:mr-4 md:my-3 w-full h-full" style={{ maxHeight: "39vh" }}>
-                  <canvas id="fullStackBarChart" src="..."></canvas>
-                </div>
-              </div>
-              <div>
-                <div className="bg-white shadow-md rounded-[20px] md:p-3 md:mr-4 md:my-2 w-full h-full" style={{ maxHeight: "39vh" }}>
-                  <canvas id="fullStackBarChartAspect" src="..."></canvas>
-                </div>
-                <div className="bg-white shadow-md rounded-[20px] md:my-2 w-full h-full" style={{ maxHeight: "45vh" }}>
-                  <canvas id="RadarChart" className="mx-auto" src="..."></canvas>
-                </div>
-              </div>
-            </div>
+      <>{selectedSentiments}</>
+      <div className="md:container md:mx-auto md:mt-1 md:mb-5 md:w-full md:h-full m-h-screen">
+        <div className="flex justify-center items-center">
+          <div className="w-full sm:w-2/3 md:w-1/2 lg:w-1/3 my-2 flex justify-end bg-white rounded-[12px]">
+            <Select
+              className="w-full"
+              variant="bordered"
+              // label="Filter Sentiment"
+              selectionMode="multiple"
+              placeholder="Aspect"
+              selectedKeys={selectedSentiments}
+              onSelectionChange={setSelectedSentiments}
+            >
+              {optionsSentiment.map((item) => (
+                <SelectItem key={item.value} value={item.value}>
+                  {item.label}
+                </SelectItem>
+              ))}
+            </Select>
           </div>
         </div>
+        {selectedModelSm1 && selectedModelSm2 && (
+          <div className="grid grid-cols-11 gap-3">
+            <div className="col-span-5 grid grid-cols-5">
+              <div className="col-span-5 overflow-y-auto shadow-md p-2 my-2 bg-white max-h-screen" style={{ borderRadius: "20px", maxHeight: "81vh" }}>
+                <table id="dataTable" className="md:w-full md:h-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 px-5">
+                  <colgroup>
+                    <col style={{ width: "5%" }} />
+                    <col style={{ width: "60%" }} />
+                    <col style={{ width: "25%" }} />
+                    <col style={{ width: "10%" }} />
+                  </colgroup>
+                  <thead className="text-base">
+                    <tr>
+                      <th scope="col" className="pl-5 pr-1 py-2">
+                      </th>
+                      <th scope="col" className="px-2 py-2">Overall Review
+                      </th>
+                      <th scope="col" className="px-3 py-2">
+                        Model
+                      </th>
+                      <th scope="col" className="px-2 py-2">
+                        Sentiment
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {filterReviewsBySentiment().map((review, index) => (
+                      <tr key={index}>
+                        <th scope="row" className="pl-5 pr-1 py-3 font-medium text-gray-500 whitespace-nowrap dark:text-white">
+                          {index + 1}
+                        </th>
+                        <td className="px-2 py-2">
+                          {review.textDisplay}
+                        </td>
+                        <td className="px-3 py-2">
+                          {review.smartphoneName}
+                        </td>
+                        <td className="px-2 py-2 text-center">
+                          <span style={{
+                            padding: "3px",
+                            border: "1px solid #DCF4E7",
+                            borderRadius: "5px",
+                            backgroundColor: getBackgroundColor(review.Sentiment_Label),
+                            color: getTextColor(review.Sentiment_Label),
+                            display: 'inline-block',
+                            padding: '4px 4px'
+                          }}>
+                            {getSentimentText(review.Sentiment_Label)}
+                          </span>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <div className="col-span-6">
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <div className="bg-white shadow-md rounded-[20px] md:p-3 md:my-2 w-full h-full" style={{ maxHeight: "40vh" }}>
+                    <canvas id="ovaBarChart">barchart</canvas>
+                  </div>
+                  <div className="bg-white shadow-md rounded-[20px] md:p-3 md:mr-4 md:my-2 w-full h-full" style={{ maxHeight: "40vh" }}>
+                    <canvas id="fullStackBarChart" src="..."></canvas>
+                  </div>
+                </div>
+                <div>
+                  <div className="bg-white shadow-md rounded-[20px] md:p-3 md:mr-4 md:my-2 w-full h-full" style={{ maxHeight: "36vh" }}>
+                    <canvas id="fullStackBarChartAspect" src="..."></canvas>
+                  </div>
+                  <div className="bg-white shadow-md rounded-[20px] md:my-2 w-full h-full" style={{ maxHeight: "44vh" }}>
+                    <canvas id="RadarChart" className="mx-auto" src="..."></canvas>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
       </div>
+
+
+      {selectedModelSm1 && selectedModelSm2 && (
+        <div>
+          <div className="text-center md:my-5">
+            <span className="text-3xl font-semibold font-mono md:font-mono">Smartphone Information</span>
+          </div>
+          <div className="md:mx-auto w-full max-w-4xl">
+            <Table aria-label="Example table with dynamic content">
+              <TableHeader columns={columnsInfoData}>
+                {(column, index) => (
+                  <TableColumn key={column.key} className="text-base"
+                  style={{ width: index === 0 ? "5%":"25%"}}>
+                    {column.label}
+                  </TableColumn>
+                )}
+              </TableHeader>
+              <TableBody items={rowsInfoData}>
+                {(item) => (
+                  <TableRow key={item.info}>
+                    {(columnKey) => <TableCell>{item[columnKey]}</TableCell>}
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
+          </div>
+        </div>
+      )}
     </>
   );
 
