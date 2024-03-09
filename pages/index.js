@@ -44,10 +44,7 @@ export default function Home() {
   const [selectAspect, setSelectAspect] = React.useState(new Set(["Camera", "Battery", "Screen", "Performance", "Price"]));
   const [Modelasp, setAspect] = React.useState(["Camera", "Battery", "Screen", "Performance", "Price"]);
   const [aspectsData, setAspectsData] = useState({})
-  const [review, setReview] = useState({})
-
-
-
+  const [reviews, setReviews] = useState([]);
 
   useEffect(() => {
     setStatusData(false)
@@ -174,6 +171,47 @@ export default function Home() {
 
   }, [defaultSelectModel, setDefaultSelectModel, selectedBrand]);
 
+  
+
+  const getBackgroundColor = (sentiment) => {
+    switch (sentiment) {
+      case 'pos':
+        return "#EFFAF5";
+      case 'neu':
+        return "#FFF7E6";
+      case 'neg':
+        return "#FEF3F3";
+      default:
+        return ""; // Default color
+    }
+  };
+
+  const getTextColor = (sentiment) => {
+    switch (sentiment) {
+      case 'pos':
+        return "#1FBB66";
+      case 'neu':
+        return "#EEA717";
+      case 'neg':
+        return "#EA4141";
+      default:
+        return ""; // Default text color
+    }
+  };
+
+  const getSentimentText = (sentiment) => {
+    switch (sentiment) {
+      case 'pos':
+        return "Positive";
+      case 'neu':
+        return "Neutral";
+      case 'neg':
+        return "Negative";
+      default:
+        return sentiment; // Return original sentiment if not recognized
+    }
+  };
+
 
 
   const fetchDataModel = (e) => {
@@ -181,39 +219,63 @@ export default function Home() {
     fetchDataBrand();
   }
 
+  const callapi = async (fetchDataModel) => {
+    console.log("Test fetch data => ", fetchDataModel)
+
+
+    let brandres = await fetch(`http://localhost:3000/api/countsentiment?brand=${selectedBrand}&model=${fetchDataModel}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    let countmodel = await brandres.json();
+    setSelectedModel(fetchDataModel);
+    console.log("yshs", countmodel)
+    await setModelCountpos(countmodel.overviews.model_pos)
+    await setModelCountneu(countmodel.overviews.model_neu)
+    await setModelCountneg(countmodel.overviews.model_neg)
+    await setAspectsData(countmodel.Aspect)
+
+
+    let reviewRes = await fetch(`http://localhost:3000/api/reviewmodel?model=${fetchDataModel}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    let reviews = await reviewRes.json();
+    setReviews(reviews);
+
+  };
 
   const fetchDataBrand = async () => {
     console.log("Test fetch data => ", selectedModel)
-    if (selectedModel === "iPhone 12") {
-      let brandres = await fetch(`http://localhost:3000/api/countsentiment`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-      let countmodel = await brandres.json();
-      console.log("yshs", countmodel)
-      await setModelCountpos(countmodel.overviews.model_pos)
-      await setModelCountneu(countmodel.overviews.model_neu)
-      await setModelCountneg(countmodel.overviews.model_neg)
-      await setAspectsData(countmodel.Aspect)
-      await setReview(countmodel.Aspect)
-    } else {
-      let brandres = await fetch(`http://localhost:3000/api/countsentiment?brand=${selectedBrand}&model=${selectedModel}`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-      let countmodel = await brandres.json();
-      console.log("yshs", countmodel)
-      await setModelCountpos(countmodel.overviews.model_pos)
-      await setModelCountneu(countmodel.overviews.model_neu)
-      await setModelCountneg(countmodel.overviews.model_neg)
-      await setAspectsData(countmodel.Aspect)
-      // await setReview(countmodel.Review.reviews_pos[0].reviews_pos)
-      // console.log("jjnk",review)
-    }
+
+    let brandres = await fetch(`http://localhost:3000/api/countsentiment?brand=${selectedBrand}&model=${selectedModel}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    let countmodel = await brandres.json();
+    console.log("yshs", countmodel)
+    await setModelCountpos(countmodel.overviews.model_pos)
+    await setModelCountneu(countmodel.overviews.model_neu)
+    await setModelCountneg(countmodel.overviews.model_neg)
+    await setAspectsData(countmodel.Aspect)
+
+    let reviewRes = await fetch(`http://localhost:3000/api/reviewmodel?model=${selectedModel}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    let reviews = await reviewRes.json();
+    setReviews(reviews);
+    console.log('====================================');
+    console.log('hghg', reviews);
+    console.log('====================================');
   };
 
 
@@ -279,8 +341,6 @@ export default function Home() {
     });
     donutChartRef.current.chart = newDonutChart;
   }
-
-
   useEffect(() => {
     if (barChartRef.current) {
       if (barChartRef.current.chart) {
@@ -288,7 +348,7 @@ export default function Home() {
       }
 
       const barcontext = barChartRef.current.getContext("2d");
-      let a = [];
+      let labels = [];
       let array_pos = [];
       let array_neu = [];
       let array_neg = [];
@@ -300,21 +360,24 @@ export default function Home() {
           aspectsData[element]["aspect_neu"] !== undefined &&
           aspectsData[element]["aspect_neg"] !== undefined
         ) {
-          a.push(element);
           let total =
             aspectsData[element]["aspect_pos"] +
             aspectsData[element]["aspect_neu"] +
             aspectsData[element]["aspect_neg"];
-          array_pos.push((aspectsData[element]["aspect_pos"] / total) * 100);
-          array_neu.push((aspectsData[element]["aspect_neu"] / total) * 100);
-          array_neg.push((aspectsData[element]["aspect_neg"] / total) * 100);
+
+          if (total > 0) {
+            labels.push(element);
+            array_pos.push((aspectsData[element]["aspect_pos"] / total) * 100);
+            array_neu.push((aspectsData[element]["aspect_neu"] / total) * 100);
+            array_neg.push((aspectsData[element]["aspect_neg"] / total) * 100);
+          }
         }
       });
-      console.log("tas", array_neu)
+
       const barChart = new Chart(barcontext, {
         type: "bar",
         data: {
-          labels: a,
+          labels: labels,
           datasets: [
             {
               label: "Positive",
@@ -337,12 +400,12 @@ export default function Home() {
           ],
         },
         options: {
-          indexAxis: "y", // Change to horizontal orientation
+          indexAxis: "y",
           responsive: true,
           scales: {
             x: {
               stacked: true,
-              max: 100, // ให้แกน x เต็ม 100%
+              max: 100,
               ticks: {
                 callback: function (value) {
                   return value + "%";
@@ -378,7 +441,7 @@ export default function Home() {
             },
           },
         },
-        plugins: [ChartDataLabels], // ใช้ปลั๊กอิน datalabels
+        plugins: [ChartDataLabels],
       });
 
       barChartRef.current.chart = barChart;
@@ -523,28 +586,15 @@ export default function Home() {
                 </SelectItem>
               ))}
             </Select>
-            {/* <Select
-              label="Select Model"
-              className="max-w-xs "
-              style={{ boxShadow: "2px 2px 2px 2px rgba(197, 197, 197, 0.2)", backgroundColor: "white" }}
-              color="default"
-              defaultValue={selectedModel}
-              onSelectionChange={setSelectedModel}
-              // value={selectedModel}
-            >
-              {showModel.map((model) => 
-                <SelectItem  key={model} value={model}>
-                  {model}
-                </SelectItem>
-              )}
-            </Select> */}
+
             <Select
               label="Select Model"
               className="max-w-xs "
               style={{ boxShadow: "2px 2px 2px 2px rgba(197, 197, 197, 0.2)", backgroundColor: "white" }}
               color="default"
               selectedKeys={[selectedModel]}
-              onChange={fetchDataModel}
+              onChange={(e) => callapi(e.target.value)}
+              // SelectionChange={fetchDataModel}
 
               defaultSelectedKeys={[selectedModel]}
             >
@@ -590,46 +640,31 @@ export default function Home() {
         </div>
         <div className="grid grid-cols-2 gap-2 mt-5 mb-5">
 
-          <Table aria-label="Example static collection table" style={{ height: '100%' }} >
-            <TableHeader>
-              <TableColumn ></TableColumn>
-              <TableColumn colSpan={3}>Review</TableColumn>
-              <TableColumn>Sentiment</TableColumn>
-            </TableHeader>
-            <TableBody>
-              <TableRow key="1">
-                <TableCell>Price</TableCell>
-                <TableCell colSpan={3} style={{ wordBreak: 'break-word' }}>TonyReicherccccปแแแแแแแแแccccccccccccccccccccccccccccccct</TableCell>
-                <TableCell>Active</TableCell>
-              </TableRow>
-              <TableRow key="2">
-                <TableCell>Price</TableCell>
-                <TableCell colSpan={3} style={{ wordBreak: 'break-word' }}>Zoey Lang</TableCell>
-                <TableCell>Paused</TableCell>
-              </TableRow>
-              <TableRow key="3">
-                <TableCell>Price</TableCell>
-                <TableCell colSpan={3} style={{ wordBreak: 'break-word' }}>Jane Fisher</TableCell>
-                <TableCell>Active</TableCell>
-              </TableRow>
-              <TableRow key="4" style={{ wordBreak: 'break-word' }}>
-                <TableCell>Price</TableCell>
-                <TableCell colSpan={3}>William Howard</TableCell>
-                <TableCell>Vacation</TableCell>
-              </TableRow>
-              <TableRow key="5" style={{ wordBreak: 'break-word' }}>
-                <TableCell>Price</TableCell>
-                <TableCell colSpan={3}>William Howard</TableCell>
-                <TableCell>Vacation</TableCell>
-              </TableRow>
-              <TableRow key="6" style={{ wordBreak: 'break-word' }}>
-                <TableCell>Price</TableCell>
-                <TableCell colSpan={3}>William Howard</TableCell>
-                <TableCell>Vacation</TableCell>
-              </TableRow>
 
+          <Table style={{border:'none',maxHeight: '500px', overflowY: 'auto' }} aria-label="Example slide with dynamic content">
+            <TableHeader >
+              <TableColumn></TableColumn>
+              <TableColumn className="text-base font-sans-semibold" >Overall Review</TableColumn>
+              <TableColumn className="text-base font-sans-semibold"  >Model</TableColumn>
+              <TableColumn className="text-base font-sans-semibold"  >Sentiment</TableColumn>
+            </TableHeader>
+            <TableBody className="table-body"  style={{ maxHeight: '50px', overflowY: 'scroll' }}>
+              {reviews.slice(0, 10).map((review, index) => (
+                <TableRow key={index}> 
+                  <TableCell>{index + 1}</TableCell>
+                  <TableCell>{review.textDisplay}</TableCell>
+                  <TableCell>{review.smartphoneName}</TableCell>
+                  <TableCell className="text-center">
+                    <span style={{
+                      borderRadius: '1px',padding: '3px', backgroundColor: getBackgroundColor(review.Sentiment_Label), color: getTextColor(review.Sentiment_Label)
+                    }}>{getSentimentText(review.Sentiment_Label)}
+                    </span>
+                  </TableCell>
+                </TableRow>
+              ))}
             </TableBody>
           </Table>
+
 
           <div className="bg-white">
             <TagCloud />
