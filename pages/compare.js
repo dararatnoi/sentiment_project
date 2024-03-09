@@ -5,6 +5,8 @@ import { Autocomplete, AutocompleteItem } from "@nextui-org/react";
 import Chart from 'chart.js/auto';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 import { Select, SelectItem } from "@nextui-org/react";
+import { Checkbox } from "@nextui-org/react";
+import { BsEmojiNeutral } from "react-icons/bs";
 import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, getKeyValue } from "@nextui-org/react";
 import axios from 'axios';
 
@@ -28,18 +30,18 @@ export default function compare() {
   const [smartphoneInfoSm2, setsmartphoneInfoSm2] = useState({});
   const [smartphoneInfoSm3, setsmartphoneInfoSm3] = useState({});
 
-
-
   const [reviews, setReviews] = useState([]);
 
-  const [selectedSentiments, setSelectedSentiments] = useState([]); // Initial value set to "Positive"
-  const [filteredReviews, setFilteredReviews] = useState([]);
+  const [showNeutralData, setShowNeutralData] = useState(true);
 
-  const optionsSentiment = [
-    { value: 'pos', label: 'Positive' },
-    { value: 'neg', label: 'Negative' },
-    { value: 'neu', label: 'Neutral' }
-  ];
+  const [selectedSentiments, setSelectedSentiments] = useState(''); // Initial value set to "Positive"
+  // const [filteredReviews, setFilteredReviews] = useState('');
+
+  // const optionsSentiment = [
+  //   { value: 'pos', label: 'Positive' },
+  //   { value: 'neg', label: 'Negative' },
+  //   { value: 'neu', label: 'Neutral' }
+  // ];
 
   const brandName = ["Apple", "Samsung", "OPPO", "vivo", "Huawei", "Xiaomi"]
 
@@ -228,12 +230,20 @@ export default function compare() {
     },
   ];
 
-  const filterReviewsBySentiment = () => {
-    if (!Array.isArray(selectedSentiments) || selectedSentiments.length === 0) {
-      return reviews; // No filtering required if nothing is selected
-    }
+  const handleCheckboxChangeNeutralData = () => {
+    setShowNeutralData(!showNeutralData); // Toggle the state
+  };
 
-    return reviews.filter(review => selectedSentiments.includes(review.Sentiment_Label));
+  const filterReviewsBySentiment = () => {
+    if (!showNeutralData && selectedSentiments !== '') {
+      return reviews.filter(review => review.Sentiment_Label !== 'neu' && review.Sentiment_Label === selectedSentiments);
+    } else if (selectedSentiments !== '') {
+      return reviews.filter(review => review.Sentiment_Label === selectedSentiments);
+    } else if (!showNeutralData) {
+      return reviews.filter(review => review.Sentiment_Label !== "neu");
+    } else {
+      return reviews;
+    }
   };
 
   useEffect(() => {
@@ -484,9 +494,17 @@ export default function compare() {
 
 
   useEffect(() => {
-    const totalOverviewSm1 = overviewSm1.pos + overviewSm1.neu + overviewSm1.neg
-    const totalOverviewSm2 = overviewSm2.pos + overviewSm2.neu + overviewSm2.neg
-    const totalOverviewSm3 = overviewSm3.pos + overviewSm3.neu + overviewSm3.neg
+    let totalOverviewSm1, totalOverviewSm2, totalOverviewSm3;
+
+    if (showNeutralData) {
+      totalOverviewSm1 = overviewSm1.pos + overviewSm1.neu + overviewSm1.neg;
+      totalOverviewSm2 = overviewSm2.pos + overviewSm2.neu + overviewSm2.neg;
+      totalOverviewSm3 = overviewSm3.pos + overviewSm3.neu + overviewSm3.neg;
+    } else {
+      totalOverviewSm1 = overviewSm1.pos + overviewSm1.neg;
+      totalOverviewSm2 = overviewSm2.pos + overviewSm2.neg;
+      totalOverviewSm3 = overviewSm3.pos + overviewSm3.neg;
+    }
 
     // Convert counts to percentages
     const positivePercentageSm1 = (overviewSm1.pos / totalOverviewSm1) * 100;
@@ -513,6 +531,27 @@ export default function compare() {
       negativeData.push(negativePercentageSm3);
     }
 
+    let datasets = [{
+      label: 'Positive',
+      data: positiveData,
+      backgroundColor: 'rgba(75, 192, 192, 0.5)',
+      stack: 'Stack 1'
+    }, {
+      label: 'Negative',
+      data: negativeData,
+      backgroundColor: 'rgba(255, 99, 132, 0.5)',
+      stack: 'Stack 1'
+    }];
+
+    if (showNeutralData) {
+      datasets.splice(1, 0, { // Insert Neutral data as the second dataset
+        label: 'Neutral',
+        data: neutralData,
+        backgroundColor: 'rgba(255, 205, 86, 0.5)',
+        stack: 'Stack 1'
+      });
+    }
+
     const stBarChartElement = document.getElementById('fullStackBarChart');
     if (stBarChartElement) {
       stBarChartElement.width = stBarChartElement.parentElement.offsetWidth;
@@ -524,22 +563,7 @@ export default function compare() {
         plugins: [ChartDataLabels],
         data: {
           labels: labels,
-          datasets: [{
-            label: 'Positive',
-            data: positiveData,
-            backgroundColor: 'rgba(75, 192, 192, 0.5)',
-            stack: 'Stack 1'
-          }, {
-            label: 'Neutral',
-            data: neutralData,
-            backgroundColor: 'rgba(255, 205, 86, 0.5)',
-            stack: 'Stack 1'
-          }, {
-            label: 'Negative',
-            data: negativeData,
-            backgroundColor: 'rgba(255, 99, 132, 0.5)',
-            stack: 'Stack 1'
-          }]
+          datasets: datasets
         },
         options: {
           plugins: {
@@ -599,7 +623,7 @@ export default function compare() {
         stackBarChart.destroy();
       };
     }
-  }, [overviewSm1.pos, overviewSm1.neu, overviewSm1.neg, overviewSm2.pos, overviewSm2.neu, overviewSm2.neg, overviewSm3.pos, overviewSm3.neu, overviewSm3.neg, selectedModelSm1, selectedModelSm2, selectedModelSm3]);
+  }, [overviewSm1, overviewSm2, overviewSm3, selectedModelSm1, selectedModelSm2, selectedModelSm3, showNeutralData]);
 
 
   useEffect(() => {
@@ -695,20 +719,27 @@ export default function compare() {
         data: [overviewSm1.pos, overviewSm2.pos],
         backgroundColor: 'rgba(75, 192, 192, 0.5)',
       }, {
-        label: 'Neutral',
-        data: [overviewSm1.neu, overviewSm2.neu],
-        backgroundColor: 'rgba(255, 205, 86, 0.5)',
-      }, {
         label: 'Negative',
         data: [overviewSm1.neg, overviewSm2.neg],
         backgroundColor: 'rgba(255, 99, 132, 0.5)',
       }];
 
+      if (showNeutralData) {
+        datasets.splice(1, 0, { // Insert Neutral data as the second dataset
+          label: 'Neutral',
+          data: [overviewSm1.neu, overviewSm2.neu],
+          backgroundColor: 'rgba(255, 205, 86, 0.5)',
+        });
+      }
+
       if (selectedModelSm3) {
         labels.push(selectedModelSm3);
         datasets[0].data.push(overviewSm3.pos);
-        datasets[1].data.push(overviewSm3.neu);
-        datasets[2].data.push(overviewSm3.neg);
+        datasets[1].data.push(overviewSm3.neg);
+
+        if (showNeutralData) {
+          datasets[1].data.push(overviewSm3.neu);
+        }
       }
 
       let overallBarChart = new Chart(ovaBarChartContext, {
@@ -764,9 +795,7 @@ export default function compare() {
         overallBarChart.destroy();
       };
     }
-  }, [overviewSm1.pos, overviewSm1.neu, overviewSm1.neg, overviewSm2.pos, overviewSm2.neu, overviewSm2.neg, overviewSm3.pos, overviewSm3.neu, overviewSm3.neg, selectedModelSm3]);
-
-
+  }, [overviewSm1, overviewSm2, overviewSm3, selectedModelSm3, showNeutralData]);
 
   return (
     <>
@@ -776,6 +805,7 @@ export default function compare() {
         }
       `}</style>
       <Navbar />
+      <>{showNeutralData}</>
       <div className="md:container md:mx-auto mt-3">
         <div className="grid grid-cols-3 gap-3">
           <div className="grid grid-cols-5 gap-2">
@@ -876,25 +906,35 @@ export default function compare() {
 
         </div>
       </div>
-      <>{selectedSentiments}</>
       <div className="md:container md:mx-auto md:mt-1 md:mb-5 md:w-full md:h-full m-h-screen">
         <div className="flex justify-center items-center">
           <div className="w-full sm:w-2/3 md:w-1/2 lg:w-1/3 my-2 flex justify-end bg-white rounded-[12px]">
-            <Select
-              className="w-full"
+            <Autocomplete
+              classNames="w-full"
               variant="bordered"
-              // label="Filter Sentiment"
-              selectionMode="multiple"
-              placeholder="Aspect"
-              selectedKeys={selectedSentiments}
+              label="Select Sentiment"
+              items={!showNeutralData ?
+                [
+                  { value: 'pos', label: 'Positive' },
+                  { value: 'neg', label: 'Negative' }
+                ] :
+                [
+                  { value: 'pos', label: 'Positive' },
+                  { value: 'neg', label: 'Negative' },
+                  { value: 'neu', label: 'Neutral' }
+                ]}
+              selectedKey={selectedSentiments}
               onSelectionChange={setSelectedSentiments}
             >
-              {optionsSentiment.map((item) => (
-                <SelectItem key={item.value} value={item.value}>
-                  {item.label}
-                </SelectItem>
-              ))}
-            </Select>
+              {(item) => <AutocompleteItem key={item.value}>{item.label}</AutocompleteItem>}
+            </Autocomplete>
+          </div>
+          <div>
+            <Checkbox defaultSelected={!showNeutralData} radius="sm"
+              checked={showNeutralData}
+              onChange={handleCheckboxChangeNeutralData}>
+              Show Positive and Negative
+            </Checkbox>
           </div>
         </div>
         {selectedModelSm1 && selectedModelSm2 && (
@@ -989,7 +1029,7 @@ export default function compare() {
               <TableHeader columns={columnsInfoData}>
                 {(column, index) => (
                   <TableColumn key={column.key} className="text-base"
-                  style={{ width: index === 0 ? "5%":"25%"}}>
+                    style={{ width: index === 0 ? "5%" : "25%" }}>
                     {column.label}
                   </TableColumn>
                 )}
