@@ -25,7 +25,6 @@ export default function Home() {
   // const [brandModel, setBrand] = React.useState(["All", "Apple", "Samsung", "Oppo", "Vivo", "Xiaomi", "Huawei"]);
   const [brandModel, setBrand] = React.useState(["Apple", "OPPO", "Samsung", "vivo", "Xiaomi", "Huawei"]);
 
-  const [a, seta] = useState(['a', 'b'])
   const [brandsData, setBrandsData] = React.useState({})
   //2ปุ่ม
   const [brandList, setBrandList] = useState([]);
@@ -40,7 +39,7 @@ export default function Home() {
   const chartRef = useRef(null)
   const donutChartRef = useRef(null)
   const barChartRef = useRef(null)
-
+  const barHorizontalChartRef = useRef(null)
   const [selectAspect, setSelectAspect] = React.useState(new Set(["Camera", "Battery", "Screen", "Performance", "Price"]));
   const [Modelasp, setAspect] = React.useState(["Camera", "Battery", "Screen", "Performance", "Price"]);
   const [aspectsData, setAspectsData] = useState({})
@@ -171,7 +170,7 @@ export default function Home() {
 
   }, [defaultSelectModel, setDefaultSelectModel, selectedBrand]);
 
-  
+
 
   const getBackgroundColor = (sentiment) => {
     switch (sentiment) {
@@ -313,7 +312,7 @@ export default function Home() {
         plugins: {
           title: {
             display: true,
-            text: 'Sentiment Analysis Overview',
+            text: 'Sentiment Analysis Overall',
             font: {
               size: 18,
               family: 'Kanit',
@@ -341,6 +340,7 @@ export default function Home() {
     });
     donutChartRef.current.chart = newDonutChart;
   }
+
   useEffect(() => {
     if (barChartRef.current) {
       if (barChartRef.current.chart) {
@@ -420,7 +420,7 @@ export default function Home() {
           plugins: {
             title: {
               display: true,
-              text: "Customer feelings towards each aspect of smartphones",
+              text: "Percentage of customer feelings towards each aspect of smartphones",
               font: {
                 size: 18,
                 family: "Kanit",
@@ -431,7 +431,7 @@ export default function Home() {
               display: true,
             },
             datalabels: {
-              color: "#000000",
+              color: "#808080",
               anchor: "center",
               align: "center",
               clamp: true,
@@ -448,22 +448,97 @@ export default function Home() {
     }
   }, [selectAspect, aspectsData]);
 
-  // useEffect(() => {
-  //   // Ensure defaultSelectModel is set before updating selectedModel
-  //   if (defaultSelectModel !== '') {
-  //     setSelectedModel(defaultSelectModel);
-  //   }
-  // }, [defaultSelectModel]);
+  useEffect(() => {
+    if (barHorizontalChartRef.current) {
+      if (barHorizontalChartRef.current.chart) {
+        barHorizontalChartRef.current.chart.destroy();
+      }
+
+      const barcontext = barHorizontalChartRef.current.getContext("2d");
+      let labels = [];
+      let array_pos = [];
+      let array_neu = [];
+      let array_neg = [];
+
+      selectAspect.forEach(element => {
+        if (
+          aspectsData[element] &&
+          aspectsData[element]["aspect_pos"] !== undefined &&
+          aspectsData[element]["aspect_neu"] !== undefined &&
+          aspectsData[element]["aspect_neg"] !== undefined
+        ) {
+          let total =
+            aspectsData[element]["aspect_pos"] +
+            aspectsData[element]["aspect_neu"] +
+            aspectsData[element]["aspect_neg"];
+
+          if (total > 0) {
+            labels.push(element);
+            array_pos.push(aspectsData[element]["aspect_pos"]);
+            array_neu.push(aspectsData[element]["aspect_neu"]);
+            array_neg.push(aspectsData[element]["aspect_neg"]);
+          }
+        }
+      });
+
+      const barChart = new Chart(barcontext, {
+        type: "bar",
+        data: {
+          labels: labels,
+          datasets: [
+            {
+              label: "Positive",
+              data: array_pos,
+              backgroundColor: "rgba(75, 192, 192, 0.5)",
+            },
+            {
+              label: "Neutral",
+              data: array_neu,
+              backgroundColor: "rgba(255, 206, 86, 0.5)",
+            },
+            {
+              label: "Negative",
+              data: array_neg,
+              backgroundColor: "rgba(255, 99, 132, 0.5)",
+            },
+          ],
+        },
+        options: {
+          indexAxis: "y",
+          responsive: true,
+         
+          plugins: {
+            title: {
+              display: true,
+              text: "Count of customer feelings towards each aspect of smartphones",
+              font: {
+                size: 18,
+                family: "Kanit",
+              },
+              position: "top",
+            },
+            legend: {
+              display: true,
+            },
+            datalabels: {
+              color: "#808080",
+              anchor: "end",
+              align: "end",
+              clamp: true,
+              formatter: function (value, context) {
+                return value;
+              },
+            },
+          },
+        },
+        plugins: [ChartDataLabels],
+      });
+
+      barHorizontalChartRef.current.chart = barChart;
+    }
+  }, [selectAspect, aspectsData]);
 
 
-  // const changeCheckBox = (select) => {
-  //   let result = []
-  //   selectBrand.forEach(element => {
-  //     result.push(element)
-  //   });
-
-  //   // seta(result)
-  // }
 
   return (
     <div className="bg-costom-pbg w-full h-full pb-2">
@@ -542,14 +617,15 @@ export default function Home() {
                   backgroundColor: "white"
                 }}>
                 <div className="card-body">
-                  <div className="flex justify-end align-items-center"
-                    style={{ width: '200px', height: '50px' }}>
+                  <div className="flex w-full flex-wrap md:flex-nowrap  mt-1 mb-1 justify-end">
                     <Select
                       label="Brand"
                       selectionMode="multiple"
                       placeholder="Select Brand"
                       selectedKeys={selectBrand}
                       onSelectionChange={setSelectBrand}
+                      style={{ width: '250px', height: '50px' }}
+                      className="max-w-xs justify-end flex"
                     >
                       {brandModel.map((item) => (
                         <SelectItem key={item} value={item} >
@@ -568,46 +644,64 @@ export default function Home() {
         </div>
 
         {/* filter */}
-        <Skeleton isLoaded={statusData && selectedModel !== ''}>
-          <div className="flex w-full flex-wrap md:flex-nowrap gap-4 mt-5 mb-5 justify-end">
-            <Select
-              label="Select Brand"
-              // value={selectedBrand} 
-              selectedKeys={[selectedBrand]}
-              onChange={(e) => setSelectedBrand(e.target.value)}
-              defaultSelectedKeys={[selectedBrand]}
-              className="max-w-xs"
-              style={{ boxShadow: "2px 2px 2px 2px rgba(197, 197, 197, 0.2)", backgroundColor: "white" }}
-            // onChange={(value) => setSelectedBrand(value)}
-            >
-              {brandModel.map((brand) => (
-                <SelectItem key={brand} value={brand}>
-                  {brand}
-                </SelectItem>
-              ))}
-            </Select>
 
-            <Select
-              label="Select Model"
-              className="max-w-xs "
-              style={{ boxShadow: "2px 2px 2px 2px rgba(197, 197, 197, 0.2)", backgroundColor: "white" }}
-              color="default"
-              selectedKeys={[selectedModel]}
-              onChange={(e) => callapi(e.target.value)}
-              // SelectionChange={fetchDataModel}
+        <div className="flex w-full flex-wrap md:flex-nowrap gap-4 mt-5 mb-5 justify-end">
+          <Select
+            label="Select Brand"
+            // value={selectedBrand} 
+            selectedKeys={[selectedBrand]}
+            onChange={(e) => setSelectedBrand(e.target.value)}
+            defaultSelectedKeys={[selectedBrand]}
+            className="max-w-xs"
+            style={{ boxShadow: "2px 2px 2px 2px rgba(197, 197, 197, 0.2)", backgroundColor: "white" }}
+          // onChange={(value) => setSelectedBrand(value)}
+          >
+            {brandModel.map((brand) => (
+              <SelectItem key={brand} value={brand}>
+                {brand}
+              </SelectItem>
+            ))}
+          </Select>
 
-              defaultSelectedKeys={[selectedModel]}
-            >
-              {showModel.map((model) =>
-                <SelectItem key={model} value={model}>
-                  {model}
-                </SelectItem>
-              )}
-            </Select>
-          </div>
-        </Skeleton>
+          <Select
+            label="Select Model"
+            className="max-w-xs "
+            style={{ boxShadow: "2px 2px 2px 2px rgba(197, 197, 197, 0.2)", backgroundColor: "white" }}
+            color="default"
+            selectedKeys={[selectedModel]}
+            onChange={(e) => callapi(e.target.value)}
+            // SelectionChange={fetchDataModel}
+
+            defaultSelectedKeys={[selectedModel]}
+          >
+            {showModel.map((model) =>
+              <SelectItem key={model} value={model}>
+                {model}
+              </SelectItem>
+            )}
+          </Select>
+        </div>
 
         {/* กราฟด้านล่าง */}
+        <div className="flex w-full flex-wrap md:flex-nowrap  mt-5 mb-5 justify-end">
+          <Select
+            label="Aspects"
+            placeholder="Select Aspect"
+            selectionMode="multiple"
+            selectedKeys={[...selectAspect]}
+            onSelectionChange={(selected) => setSelectAspect(new Set(selected))}
+            className="max-w-xs justify-end flex"
+            // style={{ width: '200px', height: '50px' }}
+            style={{ boxShadow: "2px 2px 2px 2px rgba(197, 197, 197, 0.2)", backgroundColor: "white" }}
+          >
+            {Modelasp.map((item) => (
+              <SelectItem key={item} value={item}>
+                {item}
+              </SelectItem>
+            ))}
+          </Select>
+
+        </div>
         <div className="grid grid-cols-2 gap-2 mt-5">
 
           <div className="bg-white p-4 shadow-md rounded-[20px]" style={{ boxShadow: "5px 5px 5px 5px rgba(197, 197, 197, 0.2)" }}
@@ -618,63 +712,45 @@ export default function Home() {
           <div className="bg-white py-4 px-5 shadow-md rounded-[20px]" style={{
             boxShadow: "5px 5px 5px 5px rgba(197, 197, 197, 0.2)"
           }} >
-            <Select
-              label="Aspects"
-              placeholder="Select Aspect"
-              selectionMode="multiple"
-              selectedKeys={[...selectAspect]}
-              onSelectionChange={(selected) => setSelectAspect(new Set(selected))}
-              className="max-w-xs justify-end flex"
-              style={{ width: '200px', height: '50px' }}
-            >
-              {Modelasp.map((item) => (
-                <SelectItem key={item} value={item}>
-                  {item}
-                </SelectItem>
-              ))}
-            </Select>
+
 
             <canvas ref={barChartRef} ></canvas>
           </div>
 
         </div>
         <div className="grid grid-cols-2 gap-2 mt-5 mb-5">
-
-
-          <Table style={{border:'none',maxHeight: '500px', overflowY: 'auto' }} aria-label="Example slide with dynamic content">
-            <TableHeader >
-              <TableColumn></TableColumn>
-              <TableColumn className="text-base font-sans-semibold" >Overall Review</TableColumn>
-              <TableColumn className="text-base font-sans-semibold"  >Model</TableColumn>
-              <TableColumn className="text-base font-sans-semibold"  >Sentiment</TableColumn>
-            </TableHeader>
-            <TableBody className="table-body"  style={{ maxHeight: '50px', overflowY: 'scroll' }}>
-              {reviews.slice(0, 10).map((review, index) => (
-                <TableRow key={index}> 
-                  <TableCell>{index + 1}</TableCell>
-                  <TableCell>{review.textDisplay}</TableCell>
-                  <TableCell>{review.smartphoneName}</TableCell>
-                  <TableCell className="text-center">
-                    <span style={{
-                      borderRadius: '1px',padding: '3px', backgroundColor: getBackgroundColor(review.Sentiment_Label), color: getTextColor(review.Sentiment_Label)
-                    }}>{getSentimentText(review.Sentiment_Label)}
-                    </span>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-
-
-          <div className="bg-white">
-            <TagCloud />
-            <div className="grid grid-cols-2 gap-2 mt-5">
-
-            </div>
+          <div className=" overflow-y-auto shadow-md  bg-white" style={{ borderRadius: "20px", maxHeight: "50vh", boxShadow: "5px 5px 5px 5px rgba(197, 197, 197, 0.2)" }}>
+            <Table className="md:w-full md:h-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 ">
+              <TableHeader className="sticky top-0 bg-white" >
+                <TableColumn></TableColumn>
+                <TableColumn className="text-base font-sans-semibold" >Overall Review</TableColumn>
+                <TableColumn className="text-base font-sans-semibold" colSpan="3">Model</TableColumn>
+                <TableColumn className="text-base font-sans-semibold"  >Sentiment</TableColumn>
+              </TableHeader>
+              <TableBody className="table-body text-base" >
+                {reviews.map((review, index) => (
+                  <TableRow key={index}>
+                    <TableCell>{index + 1}</TableCell>
+                    <TableCell>{review.textDisplay}</TableCell>
+                    <TableCell colSpan="3">{review.smartphoneName}</TableCell>
+                    <TableCell className="text-center">
+                      <span style={{
+                        borderRadius: '1px', padding: '3px', backgroundColor: getBackgroundColor(review.Sentiment_Label), color: getTextColor(review.Sentiment_Label)
+                      }}>{getSentimentText(review.Sentiment_Label)}
+                      </span>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
           </div>
-          <div className="grid grid-cols-2 gap-2 mt-5">
-
+          <div className="bg-white px-5 py-7  shadow-md rounded-[20px]" style={{
+            boxShadow: "5px 5px 5px 5px rgba(197, 197, 197, 0.2)"
+          }} >
+            <canvas ref={barHorizontalChartRef} ></canvas>
           </div>
+
+
         </div >
       </div >
     </div>
