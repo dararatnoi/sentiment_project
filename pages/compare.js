@@ -10,7 +10,6 @@ import axios from 'axios';
 
 
 export default function compare() {
-  // const [statusData, setStatusData] = React.useState(false);
   const [isLoaded, setIsLoaded] = React.useState(false);
 
   const [smartphoneModelsSm1, setSmartphoneModelsSm1] = useState([]);
@@ -36,13 +35,6 @@ export default function compare() {
   const [selectedSentimentsFilter, setSelectedSentimentsFilter] = useState(''); // Initial value set to "Positive"
   const [selectedAspectsFilter, setselectedAspectsFilter] = useState('');
   const [selectedModelFilter, setselectedModelFilter] = useState('');
-  // const [filteredReviews, setFilteredReviews] = useState('');
-
-  // const optionsSentiment = [
-  //   { value: 'pos', label: 'Positive' },
-  //   { value: 'neg', label: 'Negative' },
-  //   { value: 'neu', label: 'Neutral' }
-  // ];
 
   const brandName = ["Apple", "Samsung", "OPPO", "vivo", "Huawei", "Xiaomi"]
 
@@ -201,48 +193,49 @@ export default function compare() {
       key: "Sm2",
       label: selectedModelSm2,
     },
-    {
+    // Check if selectedModelSm3 is not null or undefined
+    selectedModelSm3 && {
       key: "Sm3",
       label: selectedModelSm3,
     },
-  ];
+  ].filter(Boolean);
 
   const rowsInfoData = [
     {
       info: "Display",
-      Sm1: smartphoneInfoSm1.display,
-      Sm2: smartphoneInfoSm2.display,
-      Sm3: smartphoneInfoSm3.display,
+      Sm1: smartphoneInfoSm1?.display,
+      Sm2: smartphoneInfoSm2?.display,
+      Sm3: smartphoneInfoSm3?.display,
     },
     {
       info: "Camera",
-      Sm1: smartphoneInfoSm1.camera,
-      Sm2: smartphoneInfoSm2.camera,
-      Sm3: smartphoneInfoSm3.camera,
+      Sm1: smartphoneInfoSm1?.camera,
+      Sm2: smartphoneInfoSm2?.camera,
+      Sm3: smartphoneInfoSm3?.camera,
     },
     {
       info: "CPU",
-      Sm1: smartphoneInfoSm1.cpu,
-      Sm2: smartphoneInfoSm2.cpu,
-      Sm3: smartphoneInfoSm3.cpu,
+      Sm1: smartphoneInfoSm1?.cpu,
+      Sm2: smartphoneInfoSm2?.cpu,
+      Sm3: smartphoneInfoSm3?.cpu,
     },
     {
       info: "Operating System",
-      Sm1: smartphoneInfoSm1.os,
-      Sm2: smartphoneInfoSm2.os,
-      Sm3: smartphoneInfoSm3.os,
+      Sm1: smartphoneInfoSm1?.os,
+      Sm2: smartphoneInfoSm2?.os,
+      Sm3: smartphoneInfoSm3?.os,
     },
     {
       info: "Memory",
-      Sm1: smartphoneInfoSm1.memory,
-      Sm2: smartphoneInfoSm2.memory,
-      Sm3: smartphoneInfoSm3.memory,
+      Sm1: smartphoneInfoSm1?.memory,
+      Sm2: smartphoneInfoSm2?.memory,
+      Sm3: smartphoneInfoSm3?.memory,
     },
     {
       info: "Battery",
-      Sm1: smartphoneInfoSm1.battery,
-      Sm2: smartphoneInfoSm2.battery,
-      Sm3: smartphoneInfoSm3.battery,
+      Sm1: smartphoneInfoSm1?.battery,
+      Sm2: smartphoneInfoSm2?.battery,
+      Sm3: smartphoneInfoSm3?.battery,
     },
   ];
 
@@ -262,65 +255,76 @@ export default function compare() {
     setselectedModelFilter(newValue ?? ''); // ถ้า newValue เป็น null หรือ undefined ให้กำหนดค่าเป็น ''
   };
 
-  const filterReviewsBySentiment = () => {
-    if (!showNeutralData && selectedSentimentsFilter !== '' && selectedModelFilter !== '') {
+  const filterReviews = () => {
+    if (!showNeutralData && selectedAspectsFilter !== '' && selectedSentimentsFilter !== '' && selectedModelFilter !== '') {
+      return reviews.filter(review => review.Aspect_Sentiment_Label !== 'neu' && review.aspects === selectedAspectsFilter && review.Aspect_Sentiment_Label === selectedSentimentsFilter && review.smartphoneName === selectedModelFilter);
+
+    } else if (!showNeutralData && selectedAspectsFilter !== '' && selectedModelFilter !== '') {
+      return reviews.filter(review => review.Aspect_Sentiment_Label !== 'neu' && review.aspects === selectedAspectsFilter && review.smartphoneName === selectedModelFilter);
+
+    } else if (selectedAspectsFilter !== '' && selectedSentimentsFilter !== '' && selectedModelFilter !== '') {
+      return reviews.filter(review => review.aspects === selectedAspectsFilter && review.Aspect_Sentiment_Label === selectedSentimentsFilter && review.smartphoneName === selectedModelFilter);
+
+    } else if (!showNeutralData && selectedAspectsFilter !== '' && selectedSentimentsFilter !== '') {
+      return reviews.filter(review => review.Aspect_Sentiment_Label !== 'neu' && review.aspects === selectedAspectsFilter && review.Aspect_Sentiment_Label === selectedSentimentsFilter);
+
+    } else if (!showNeutralData && selectedSentimentsFilter !== '' && selectedModelFilter !== '') {
       return reviews.filter(review => review.Sentiment_Label !== 'neu' && review.Sentiment_Label === selectedSentimentsFilter && review.smartphoneName === selectedModelFilter);
+
+    } else if (selectedAspectsFilter !== '' && selectedModelFilter !== '') {
+      return reviews.filter(review => review.aspects === selectedAspectsFilter && review.smartphoneName === selectedModelFilter);
+
+    } else if (!showNeutralData && selectedAspectsFilter !== '') {
+      return reviews.filter(review => review.Aspect_Sentiment_Label !== 'neu' && review.aspects === selectedAspectsFilter);
+
+    } else if (selectedAspectsFilter !== '' && selectedSentimentsFilter !== '') {
+      return reviews.filter(review => review.aspects === selectedAspectsFilter && review.Aspect_Sentiment_Label === selectedSentimentsFilter);
+
     } else if (selectedSentimentsFilter !== '' && selectedModelFilter !== '') {
       return reviews.filter(review => review.Sentiment_Label === selectedSentimentsFilter && review.smartphoneName === selectedModelFilter);
-    } else if (!showNeutralData && selectedModelFilter !== '') {
+    }
+
+    else if (!showNeutralData && selectedModelFilter !== '') {
       return reviews.filter(review => review.Sentiment_Label !== "neu" && review.smartphoneName === selectedModelFilter);
-    } else if (!showNeutralData && selectedSentimentsFilter !== '') {
+    }
+
+    else if (!showNeutralData && selectedSentimentsFilter !== '') {
       return reviews.filter(review => review.Sentiment_Label !== 'neu' && review.Sentiment_Label === selectedSentimentsFilter);
-    } else if (!showNeutralData) {
+    }
+
+    else if (!showNeutralData) {
       return reviews.filter(review => review.Sentiment_Label !== "neu");
-    } else if (selectedModelFilter !== '') {
+    }
+
+    else if (selectedModelFilter !== '') {
       return reviews.filter(review => review.smartphoneName === selectedModelFilter);
-    } else if (selectedSentimentsFilter !== '') {
+    }
+
+    else if (selectedSentimentsFilter !== '') {
       return reviews.filter(review => review.Sentiment_Label === selectedSentimentsFilter);
-    } else {
+    }
+
+    else {
       return reviews;
     }
   };
 
-  const filterReviewsByAspect = () => {
-    if (!showNeutralData && selectedAspectsFilter !== '' && selectedSentimentsFilter !== '' && selectedModelFilter !== '') {
-      return aspectsReviews.filter(review => review.Aspect_Sentiment_Label !== 'neu' && review.aspects === selectedAspectsFilter && review.Aspect_Sentiment_Label === selectedSentimentsFilter && review.smartphoneName === selectedModelFilter);
-
-    } else if (!showNeutralData && selectedAspectsFilter !== '' && selectedModelFilter !== '') {
-      return aspectsReviews.filter(review => review.Aspect_Sentiment_Label !== 'neu' && review.aspects === selectedAspectsFilter && review.smartphoneName === selectedModelFilter);
-
-    } else if (selectedAspectsFilter !== '' && selectedSentimentsFilter !== '' && selectedModelFilter !== '') {
-      return aspectsReviews.filter(review => review.aspects === selectedAspectsFilter && review.Aspect_Sentiment_Label === selectedSentimentsFilter && review.smartphoneName === selectedModelFilter);
-
-    } else if (!showNeutralData && selectedAspectsFilter !== '' && selectedSentimentsFilter !== '') {
-      return aspectsReviews.filter(review => review.Aspect_Sentiment_Label !== 'neu' && review.aspects === selectedAspectsFilter && review.Aspect_Sentiment_Label === selectedSentimentsFilter);
-
-    } else if (selectedAspectsFilter !== '' && selectedModelFilter !== '') {
-      return aspectsReviews.filter(review => review.aspects === selectedAspectsFilter && review.smartphoneName === selectedModelFilter);
-
-    } else if (!showNeutralData && selectedAspectsFilter !== '') {
-      return aspectsReviews.filter(review => review.Aspect_Sentiment_Label !== 'neu' && review.aspects === selectedAspectsFilter);
-
-    } else if (selectedAspectsFilter !== '' && selectedSentimentsFilter !== '') {
-      return aspectsReviews.filter(review => review.aspects === selectedAspectsFilter && review.Aspect_Sentiment_Label === selectedSentimentsFilter);
-
-    } else {
-      return aspectsReviews.filter(review => review.aspects === selectedAspectsFilter);
-    }
-  };
-
   useEffect(() => {
-    const fetchAspectReviews = async () => {
+    const fetchReviews = async () => {
       try {
         setIsLoaded(true);
         const selectedSmartphones = [selectedModelSm1, selectedModelSm2, selectedModelSm3].filter(model => model);
         const promises = selectedSmartphones.map(model =>
-          axios.get(`/api/compare_smartphoneReviewAspect?smartphone=${encodeURIComponent(model)}&selectedAspect=${encodeURIComponent(selectedAspectsFilter)}`)
-        );
+          axios.get(`/api/compare_smartphoneReview?smartphone=${encodeURIComponent(model)}&selectedAspect=${encodeURIComponent(selectedAspectsFilter)}`));
+
         const responses = await Promise.all(promises);
         const reviewData = responses.map(response => response.data);
+
+        // Combine review data from all responses
         const combinedReviews = reviewData.flat();
-        setAspectsReviews(combinedReviews);
+
+        // Update state with combined reviews
+        setReviews(combinedReviews);
       } catch (error) {
         console.error('Error fetching smartphone review data:', error);
       } finally {
@@ -328,10 +332,7 @@ export default function compare() {
       }
     };
 
-    if (selectedAspectsFilter !== '') {
-      fetchAspectReviews();
-    }
-
+    fetchReviews();
   }, [selectedModelSm1, selectedModelSm2, selectedModelSm3, selectedAspectsFilter]);
 
   useEffect(() => {
@@ -339,7 +340,7 @@ export default function compare() {
       if (selectedBrand) {
         setIsLoaded(true);
         try {
-          const response = await axios.get(`/api/compare_smartphoneName?brandName=${encodeURIComponent(selectedBrand)}`);
+          const response = await axios.get(`/api/compare_smartphoneInfo?brandName=${encodeURIComponent(selectedBrand)}`);
           console.log('Fetched data for', selectedBrand, response.data); // Check fetched data
           setSmartphoneModels(response.data); // Update the state variable with fetched data
           console.log('State updated for', selectedBrand, response.data); // Check state variable update
@@ -365,31 +366,39 @@ export default function compare() {
   }, [selectedBrandSm1, selectedBrandSm2, selectedBrandSm3]);
 
   useEffect(() => {
-    const fetchReviews = async () => {
-      try {
-        setIsLoaded(true);
-        const selectedSmartphones = [selectedModelSm1, selectedModelSm2, selectedModelSm3];
-        const promises = selectedSmartphones
-          .filter(model => model) // Filter out any undefined or empty models
-          .map(model => axios.get(`/api/compare_smartphoneReview?smartphone=${encodeURIComponent(model)}`));
-
-        const responses = await Promise.all(promises);
-        const reviewData = responses.map(response => response.data);
-
-        // Combine review data from all responses
-        const combinedReviews = reviewData.flat();
-
-        // Update state with combined reviews
-        setReviews(combinedReviews);
-      } catch (error) {
-        console.error('Error fetching smartphone review data:', error);
-      }finally {
-        setIsLoaded(false);
+    const fetchSmartphoneInfo = async (smartphoneName, setSmartphoneInfo) => {
+      if (smartphoneName) {
+        try {
+          setIsLoaded(true);
+          const response = await axios.get(`/api/compare_smartphoneInfo?smartphone=${encodeURIComponent(smartphoneName)}`);
+          console.log('Fetched data for', smartphoneName, response.data); // Check fetched data
+          if (response.data.length > 0) {
+            setSmartphoneInfo(response.data[0].spec); // Update the state variable with fetched data
+          } else {
+            console.error('No data found for smartphone:', smartphoneName);
+          }
+        } catch (error) {
+          console.error('Error fetching smartphone review data:', error);
+        } finally {
+          setIsLoaded(false);
+        }
       }
     };
 
-    fetchReviews();
+    if (selectedModelSm1) {
+      fetchSmartphoneInfo(selectedModelSm1, setsmartphoneInfoSm1)
+    }
+
+    if (selectedModelSm2) {
+      fetchSmartphoneInfo(selectedModelSm2, setsmartphoneInfoSm2)
+    }
+
+    if (selectedModelSm3) {
+      fetchSmartphoneInfo(selectedModelSm3, setsmartphoneInfoSm3)
+    }
   }, [selectedModelSm1, selectedModelSm2, selectedModelSm3]);
+
+
 
   useEffect(() => {
     const fetchSmartphoneSentimentData = async (smartphoneName, setOverview, setAspect) => {
@@ -440,7 +449,7 @@ export default function compare() {
 
       } catch (error) {
         console.error(`Error fetching smartphones for ${smartphoneName}:`, error);
-      }finally {
+      } finally {
         setIsLoaded(false);
       }
     };
@@ -458,38 +467,38 @@ export default function compare() {
     }
   }, [selectedModelSm1, selectedModelSm2, selectedModelSm3]);
 
-  useEffect(() => {
-    const fetchSmartphoneInfo = async (smartphoneName, setSmartphoneInfo) => {
-      if (smartphoneName) {
-        try {
-          setIsLoaded(true);
-          const response = await axios.get(`/api/compare_smartphoneInfo?smartphone=${encodeURIComponent(smartphoneName)}`);
-          console.log('Fetched data for', smartphoneName, response.data); // Check fetched data
-          if (response.data.length > 0) {
-            setSmartphoneInfo(response.data[0].spec); // Update the state variable with fetched data
-          } else {
-            console.error('No data found for smartphone:', smartphoneName);
-          }
-        } catch (error) {
-          console.error('Error fetching smartphone review data:', error);
-        }finally {
-          setIsLoaded(false);
-        }
-      }
-    };
+  // useEffect(() => {
+  //   const fetchSmartphoneInfo = async (smartphoneName, setSmartphoneInfo) => {
+  //     if (smartphoneName) {
+  //       try {
+  //         setIsLoaded(true);
+  //         const response = await axios.get(`/api/compare_smartphoneInfo?smartphone=${encodeURIComponent(smartphoneName)}`);
+  //         console.log('Fetched data for', smartphoneName, response.data); // Check fetched data
+  //         if (response.data.length > 0) {
+  //           setSmartphoneInfo(response.data[0].spec); // Update the state variable with fetched data
+  //         } else {
+  //           console.error('No data found for smartphone:', smartphoneName);
+  //         }
+  //       } catch (error) {
+  //         console.error('Error fetching smartphone review data:', error);
+  //       } finally {
+  //         setIsLoaded(false);
+  //       }
+  //     }
+  //   };
 
-    if (selectedModelSm1) {
-      fetchSmartphoneInfo(selectedModelSm1, setsmartphoneInfoSm1)
-    }
+  //   if (selectedModelSm1) {
+  //     fetchSmartphoneInfo(selectedModelSm1, setsmartphoneInfoSm1)
+  //   }
 
-    if (selectedModelSm2) {
-      fetchSmartphoneInfo(selectedModelSm2, setsmartphoneInfoSm2)
-    }
+  //   if (selectedModelSm2) {
+  //     fetchSmartphoneInfo(selectedModelSm2, setsmartphoneInfoSm2)
+  //   }
 
-    if (selectedModelSm3) {
-      fetchSmartphoneInfo(selectedModelSm3, setsmartphoneInfoSm3)
-    }
-  }, [selectedModelSm1, selectedModelSm2, selectedModelSm3]);
+  //   if (selectedModelSm3) {
+  //     fetchSmartphoneInfo(selectedModelSm3, setsmartphoneInfoSm3)
+  //   }
+  // }, [selectedModelSm1, selectedModelSm2, selectedModelSm3]);
 
   ////////////////////////// Chart ////////////////////////
 
@@ -1219,7 +1228,7 @@ export default function compare() {
           <div className="grid grid-cols-11 gap-3">
             <div className="col-span-5 grid grid-cols-5">
               <div className="col-span-5 overflow-y-auto shadow-md p-2 my-2 bg-white max-h-screen" style={{ borderRadius: "20px", maxHeight: "81vh" }}>
-                <table id="dataTable" className="md:w-full md:h-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 px-5">
+                <table id="dataTable" className="md:w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 px-5">
                   <colgroup>
                     <col style={{ width: "5%", maxWidth: "5%" }} />
                     <col style={{ width: "60%", maxWidth: "60%" }} />
@@ -1243,7 +1252,7 @@ export default function compare() {
                   </thead>
                   <tbody>
                     {selectedAspectsFilter !== "" ? (
-                      filterReviewsByAspect().map((review, index) => (
+                      filterReviews().map((review, index) => (
                         <tr key={`aspect_${index}`}>
                           <th scope="row" className="pl-5 pr-1 py-3 font-medium text-gray-500 whitespace-nowrap dark:text-white">
                             {index + 1}
@@ -1269,7 +1278,7 @@ export default function compare() {
                         </tr>
                       ))
                     ) : (
-                      filterReviewsBySentiment().map((review, index) => (
+                      filterReviews().map((review, index) => (
                         <tr key={`sentiment_${index}`}>
                           <th scope="row" className="pl-5 pr-1 py-3 font-medium text-gray-500 whitespace-nowrap dark:text-white">
                             {index + 1}
@@ -1288,7 +1297,6 @@ export default function compare() {
                               backgroundColor: getBackgroundColor(review.Sentiment_Label),
                               color: getTextColor(review.Sentiment_Label),
                               display: 'inline-block',
-                              padding: '4px 4px'
                             }}>
                               {getSentimentText(review.Sentiment_Label)}
                             </span>
@@ -1303,19 +1311,19 @@ export default function compare() {
             <div className="col-span-6">
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <div className="bg-white shadow-md rounded-[20px] md:p-3 md:my-2 w-full h-full" style={{ maxHeight: "40vh" }}>
-                    <canvas id="ovaBarChart">barchart</canvas>
-                  </div>
-                  <div className="bg-white shadow-md rounded-[20px] md:p-3 md:mr-4 md:my-2 w-full h-full" style={{ maxHeight: "40vh" }}>
-                    <canvas id="fullStackBarChart" src="..."></canvas>
-                  </div>
-                </div>
-                <div>
                   <div className="bg-white shadow-md rounded-[20px] md:p-3 md:mr-4 md:my-2 w-full h-full" style={{ maxHeight: "36vh" }}>
                     <canvas id="fullStackBarChartAspect" src="..."></canvas>
                   </div>
                   <div className="bg-white shadow-md rounded-[20px] md:my-2 w-full h-full" style={{ maxHeight: "44vh" }}>
                     <canvas id="RadarChart" className="mx-auto" src="..."></canvas>
+                  </div>
+                </div>
+                <div>
+                  <div className="bg-white shadow-md rounded-[20px] md:p-3 md:my-2 w-full h-full" style={{ maxHeight: "40vh" }}>
+                    <canvas id="ovaBarChart">barchart</canvas>
+                  </div>
+                  <div className="bg-white shadow-md rounded-[20px] md:p-3 md:mr-4 md:my-2 w-full h-full" style={{ maxHeight: "40vh" }}>
+                    <canvas id="fullStackBarChart" src="..."></canvas>
                   </div>
                 </div>
               </div>
