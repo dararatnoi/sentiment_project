@@ -1,19 +1,17 @@
 // import React from 'react'
 import Navbar from "@/components/navbar";
 import React, { useEffect, useState } from 'react';
-import { Autocomplete, AutocompleteItem } from "@nextui-org/react";
+import { Autocomplete, AutocompleteItem, select } from "@nextui-org/react";
 import Chart from 'chart.js/auto';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
-import { Select, SelectItem } from "@nextui-org/react";
 import { Checkbox } from "@nextui-org/react";
-import { BsEmojiNeutral } from "react-icons/bs";
 import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, getKeyValue } from "@nextui-org/react";
 import axios from 'axios';
 
 
 export default function compare() {
   // const [statusData, setStatusData] = React.useState(false);
-  // const [isLoaded, setIsLoaded] = React.useState(false);
+  const [isLoaded, setIsLoaded] = React.useState(false);
 
   const [smartphoneModelsSm1, setSmartphoneModelsSm1] = useState([]);
   const [smartphoneModelsSm2, setSmartphoneModelsSm2] = useState([]);
@@ -31,10 +29,13 @@ export default function compare() {
   const [smartphoneInfoSm3, setsmartphoneInfoSm3] = useState({});
 
   const [reviews, setReviews] = useState([]);
+  const [aspectsReviews, setAspectsReviews] = useState([]);
 
   const [showNeutralData, setShowNeutralData] = useState(true);
 
-  const [selectedSentiments, setSelectedSentiments] = useState(''); // Initial value set to "Positive"
+  const [selectedSentimentsFilter, setSelectedSentimentsFilter] = useState(''); // Initial value set to "Positive"
+  const [selectedAspectsFilter, setselectedAspectsFilter] = useState('');
+  const [selectedModelFilter, setselectedModelFilter] = useState('');
   // const [filteredReviews, setFilteredReviews] = useState('');
 
   // const optionsSentiment = [
@@ -94,22 +95,27 @@ export default function compare() {
   const [aspectSm1, setAspectSm1] = useState({
     camera: {
       pos: 0,
+      neu: 0,
       neg: 0
     },
     battery: {
       pos: 0,
+      neu: 0,
       neg: 0
     },
     screen: {
       pos: 0,
+      neu: 0,
       neg: 0
     },
     performance: {
       pos: 0,
+      neu: 0,
       neg: 0
     },
     price: {
       pos: 0,
+      neu: 0,
       neg: 0
     }
   });
@@ -123,22 +129,27 @@ export default function compare() {
   const [aspectSm2, setAspectSm2] = useState({
     camera: {
       pos: 0,
+      neu: 0,
       neg: 0
     },
     battery: {
       pos: 0,
+      neu: 0,
       neg: 0
     },
     screen: {
       pos: 0,
+      neu: 0,
       neg: 0
     },
     performance: {
       pos: 0,
+      neu: 0,
       neg: 0
     },
     price: {
       pos: 0,
+      neu: 0,
       neg: 0
     }
   });
@@ -152,22 +163,27 @@ export default function compare() {
   const [aspectSm3, setAspectSm3] = useState({
     camera: {
       pos: 0,
+      neu: 0,
       neg: 0
     },
     battery: {
       pos: 0,
+      neu: 0,
       neg: 0
     },
     screen: {
       pos: 0,
+      neu: 0,
       neg: 0
     },
     performance: {
       pos: 0,
+      neu: 0,
       neg: 0
     },
     price: {
       pos: 0,
+      neu: 0,
       neg: 0
     }
   });
@@ -234,21 +250,94 @@ export default function compare() {
     setShowNeutralData(!showNeutralData); // Toggle the state
   };
 
+  const handleSelectSentimentchange = (newValue) => {
+    setSelectedSentimentsFilter(newValue ?? ''); // ถ้า newValue เป็น null หรือ undefined ให้กำหนดค่าเป็น ''
+  };
+
+  const handleSelectAspectSentimentchange = (newValue) => {
+    setselectedAspectsFilter(newValue ?? ''); // ถ้า newValue เป็น null หรือ undefined ให้กำหนดค่าเป็น ''
+  };
+
+  const handleSelectModelSentimentchange = (newValue) => {
+    setselectedModelFilter(newValue ?? ''); // ถ้า newValue เป็น null หรือ undefined ให้กำหนดค่าเป็น ''
+  };
+
   const filterReviewsBySentiment = () => {
-    if (!showNeutralData && selectedSentiments !== '') {
-      return reviews.filter(review => review.Sentiment_Label !== 'neu' && review.Sentiment_Label === selectedSentiments);
-    } else if (selectedSentiments !== '') {
-      return reviews.filter(review => review.Sentiment_Label === selectedSentiments);
+    if (!showNeutralData && selectedSentimentsFilter !== '' && selectedModelFilter !== '') {
+      return reviews.filter(review => review.Sentiment_Label !== 'neu' && review.Sentiment_Label === selectedSentimentsFilter && review.smartphoneName === selectedModelFilter);
+    } else if (selectedSentimentsFilter !== '' && selectedModelFilter !== '') {
+      return reviews.filter(review => review.Sentiment_Label === selectedSentimentsFilter && review.smartphoneName === selectedModelFilter);
+    } else if (!showNeutralData && selectedModelFilter !== '') {
+      return reviews.filter(review => review.Sentiment_Label !== "neu" && review.smartphoneName === selectedModelFilter);
+    } else if (!showNeutralData && selectedSentimentsFilter !== '') {
+      return reviews.filter(review => review.Sentiment_Label !== 'neu' && review.Sentiment_Label === selectedSentimentsFilter);
     } else if (!showNeutralData) {
       return reviews.filter(review => review.Sentiment_Label !== "neu");
+    } else if (selectedModelFilter !== '') {
+      return reviews.filter(review => review.smartphoneName === selectedModelFilter);
+    } else if (selectedSentimentsFilter !== '') {
+      return reviews.filter(review => review.Sentiment_Label === selectedSentimentsFilter);
     } else {
       return reviews;
     }
   };
 
+  const filterReviewsByAspect = () => {
+    if (!showNeutralData && selectedAspectsFilter !== '' && selectedSentimentsFilter !== '' && selectedModelFilter !== '') {
+      return aspectsReviews.filter(review => review.Aspect_Sentiment_Label !== 'neu' && review.aspects === selectedAspectsFilter && review.Aspect_Sentiment_Label === selectedSentimentsFilter && review.smartphoneName === selectedModelFilter);
+
+    } else if (!showNeutralData && selectedAspectsFilter !== '' && selectedModelFilter !== '') {
+      return aspectsReviews.filter(review => review.Aspect_Sentiment_Label !== 'neu' && review.aspects === selectedAspectsFilter && review.smartphoneName === selectedModelFilter);
+
+    } else if (selectedAspectsFilter !== '' && selectedSentimentsFilter !== '' && selectedModelFilter !== '') {
+      return aspectsReviews.filter(review => review.aspects === selectedAspectsFilter && review.Aspect_Sentiment_Label === selectedSentimentsFilter && review.smartphoneName === selectedModelFilter);
+
+    } else if (!showNeutralData && selectedAspectsFilter !== '' && selectedSentimentsFilter !== '') {
+      return aspectsReviews.filter(review => review.Aspect_Sentiment_Label !== 'neu' && review.aspects === selectedAspectsFilter && review.Aspect_Sentiment_Label === selectedSentimentsFilter);
+
+    } else if (selectedAspectsFilter !== '' && selectedModelFilter !== '') {
+      return aspectsReviews.filter(review => review.aspects === selectedAspectsFilter && review.smartphoneName === selectedModelFilter);
+
+    } else if (!showNeutralData && selectedAspectsFilter !== '') {
+      return aspectsReviews.filter(review => review.Aspect_Sentiment_Label !== 'neu' && review.aspects === selectedAspectsFilter);
+
+    } else if (selectedAspectsFilter !== '' && selectedSentimentsFilter !== '') {
+      return aspectsReviews.filter(review => review.aspects === selectedAspectsFilter && review.Aspect_Sentiment_Label === selectedSentimentsFilter);
+
+    } else {
+      return aspectsReviews.filter(review => review.aspects === selectedAspectsFilter);
+    }
+  };
+
+  useEffect(() => {
+    const fetchAspectReviews = async () => {
+      try {
+        setIsLoaded(true);
+        const selectedSmartphones = [selectedModelSm1, selectedModelSm2, selectedModelSm3].filter(model => model);
+        const promises = selectedSmartphones.map(model =>
+          axios.get(`/api/compare_smartphoneReviewAspect?smartphone=${encodeURIComponent(model)}&selectedAspect=${encodeURIComponent(selectedAspectsFilter)}`)
+        );
+        const responses = await Promise.all(promises);
+        const reviewData = responses.map(response => response.data);
+        const combinedReviews = reviewData.flat();
+        setAspectsReviews(combinedReviews);
+      } catch (error) {
+        console.error('Error fetching smartphone review data:', error);
+      } finally {
+        setIsLoaded(false);
+      }
+    };
+
+    if (selectedAspectsFilter !== '') {
+      fetchAspectReviews();
+    }
+
+  }, [selectedModelSm1, selectedModelSm2, selectedModelSm3, selectedAspectsFilter]);
+
   useEffect(() => {
     const fetchSmartphoneName = async (selectedBrand, setSmartphoneModels) => {
       if (selectedBrand) {
+        setIsLoaded(true);
         try {
           const response = await axios.get(`/api/compare_smartphoneName?brandName=${encodeURIComponent(selectedBrand)}`);
           console.log('Fetched data for', selectedBrand, response.data); // Check fetched data
@@ -256,6 +345,8 @@ export default function compare() {
           console.log('State updated for', selectedBrand, response.data); // Check state variable update
         } catch (error) {
           console.error('Error fetching smartphone review data:', error);
+        } finally {
+          setIsLoaded(false);
         }
       }
     };
@@ -276,6 +367,7 @@ export default function compare() {
   useEffect(() => {
     const fetchReviews = async () => {
       try {
+        setIsLoaded(true);
         const selectedSmartphones = [selectedModelSm1, selectedModelSm2, selectedModelSm3];
         const promises = selectedSmartphones
           .filter(model => model) // Filter out any undefined or empty models
@@ -291,6 +383,8 @@ export default function compare() {
         setReviews(combinedReviews);
       } catch (error) {
         console.error('Error fetching smartphone review data:', error);
+      }finally {
+        setIsLoaded(false);
       }
     };
 
@@ -300,8 +394,9 @@ export default function compare() {
   useEffect(() => {
     const fetchSmartphoneSentimentData = async (smartphoneName, setOverview, setAspect) => {
       try {
+        setIsLoaded(true);
         const response = await axios.get(`/api/compare_smartphoneSentiment?smartphone=${encodeURIComponent(smartphoneName)}`);
-        console.log("Response:", response); // Logging the response for debugging
+        // console.log("Response:", response); // Logging the response for debugging
 
         const data = response.data; // Assuming the response is already in JSON format
 
@@ -318,28 +413,35 @@ export default function compare() {
         setAspect({
           camera: {
             pos: aspectData.Camera ? aspectData.Camera.count_pos || 0 : 0,
+            neu: aspectData.Camera ? aspectData.Camera.count_neu || 0 : 0,
             neg: aspectData.Camera ? aspectData.Camera.count_neg || 0 : 0
           },
           battery: {
             pos: aspectData.Battery ? aspectData.Battery.count_pos || 0 : 0,
+            neu: aspectData.Battery ? aspectData.Battery.count_neu || 0 : 0,
             neg: aspectData.Battery ? aspectData.Battery.count_neg || 0 : 0
           },
           screen: {
             pos: aspectData.Screen ? aspectData.Screen.count_pos || 0 : 0,
+            neu: aspectData.Screen ? aspectData.Screen.count_neu || 0 : 0,
             neg: aspectData.Screen ? aspectData.Screen.count_neg || 0 : 0
           },
           performance: {
             pos: aspectData.Performance ? aspectData.Performance.count_pos || 0 : 0,
+            neu: aspectData.Performance ? aspectData.Performance.count_neu || 0 : 0,
             neg: aspectData.Performance ? aspectData.Performance.count_neg || 0 : 0
           },
           price: {
             pos: aspectData.Price ? aspectData.Price.count_pos || 0 : 0,
+            neu: aspectData.Price ? aspectData.Price.count_neu || 0 : 0,
             neg: aspectData.Price ? aspectData.Price.count_neg || 0 : 0
           }
         });
 
       } catch (error) {
         console.error(`Error fetching smartphones for ${smartphoneName}:`, error);
+      }finally {
+        setIsLoaded(false);
       }
     };
 
@@ -360,6 +462,7 @@ export default function compare() {
     const fetchSmartphoneInfo = async (smartphoneName, setSmartphoneInfo) => {
       if (smartphoneName) {
         try {
+          setIsLoaded(true);
           const response = await axios.get(`/api/compare_smartphoneInfo?smartphone=${encodeURIComponent(smartphoneName)}`);
           console.log('Fetched data for', smartphoneName, response.data); // Check fetched data
           if (response.data.length > 0) {
@@ -369,6 +472,8 @@ export default function compare() {
           }
         } catch (error) {
           console.error('Error fetching smartphone review data:', error);
+        }finally {
+          setIsLoaded(false);
         }
       }
     };
@@ -386,7 +491,6 @@ export default function compare() {
     }
   }, [selectedModelSm1, selectedModelSm2, selectedModelSm3]);
 
-
   ////////////////////////// Chart ////////////////////////
 
   useEffect(() => {
@@ -395,24 +499,32 @@ export default function compare() {
       rdChartElement.width = rdChartElement.parentElement.offsetWidth;
       rdChartElement.height = rdChartElement.parentElement.offsetHeight;
 
-      const totalPosScoreSm1 = Object.values(aspectSm1).reduce((total, aspectItem) => {
-        return total + aspectItem.pos;
-      }, 0);
+      const calculateTotalScore = (aspectScores, sentiment) => {
+        return Object.values(aspectScores).reduce((total, aspectItem) => {
+          if (sentiment === 'neg') {
+            return total + aspectItem.neg;
+          } else if (sentiment === 'neu') {
+            return total + aspectItem.neu;
+          } else {
+            return total + aspectItem.pos;
+          }
+        }, 0);
+      };
 
-      const totalPosScoreSm2 = Object.values(aspectSm2).reduce((total, aspectItem) => {
-        return total + aspectItem.pos;
-      }, 0);
+      const totalScoreSm1 = calculateTotalScore(aspectSm1, selectedSentimentsFilter);
+      const totalScoreSm2 = calculateTotalScore(aspectSm2, selectedSentimentsFilter);
+      const totalScoreSm3 = calculateTotalScore(aspectSm3, selectedSentimentsFilter);
+      let datasets = [];
 
-      let rdChartData = {
-        labels: ["Camera", "Battery", "Screen", "Performance", "Price"],
-        datasets: [{
+      if (selectedSentimentsFilter === 'neu') {
+        datasets = [{
           label: selectedModelSm1,
           data: [
-            (aspectSm1.camera.pos / totalPosScoreSm1) * 10,
-            (aspectSm1.battery.pos / totalPosScoreSm1) * 10,
-            (aspectSm1.screen.pos / totalPosScoreSm1) * 10,
-            (aspectSm1.performance.pos / totalPosScoreSm1) * 10,
-            (aspectSm1.price.pos / totalPosScoreSm1) * 10
+            (aspectSm1.camera.neu / totalScoreSm1) * 10,
+            (aspectSm1.battery.neu / totalScoreSm1) * 10,
+            (aspectSm1.screen.neu / totalScoreSm1) * 10,
+            (aspectSm1.performance.neu / totalScoreSm1) * 10,
+            (aspectSm1.price.neu / totalScoreSm1) * 10
           ],
           backgroundColor: 'rgb(208, 72, 72, 0.2)',
           borderColor: 'rgb(208, 72, 72)',
@@ -420,36 +532,113 @@ export default function compare() {
         {
           label: selectedModelSm2,
           data: [
-            (aspectSm2.camera.pos / totalPosScoreSm2) * 10,
-            (aspectSm2.battery.pos / totalPosScoreSm2) * 10,
-            (aspectSm2.screen.pos / totalPosScoreSm2) * 10,
-            (aspectSm2.performance.pos / totalPosScoreSm2) * 10,
-            (aspectSm2.price.pos / totalPosScoreSm2) * 10
+            (aspectSm2.camera.neu / totalScoreSm2) * 10,
+            (aspectSm2.battery.neu / totalScoreSm2) * 10,
+            (aspectSm2.screen.neu / totalScoreSm2) * 10,
+            (aspectSm2.performance.neu / totalScoreSm2) * 10,
+            (aspectSm2.price.neu / totalScoreSm2) * 10
           ],
           backgroundColor: 'rgb(104, 149, 210, 0.2)',
           borderColor: 'rgb(104, 149, 210)'
-        }]
-      };
+        }];
 
-      // Check if selectedModelSm3 is selected
-      if (selectedModelSm3) {
-        const totalPosScoreSm3 = Object.values(aspectSm3).reduce((total, aspectItem) => {
-          return total + aspectItem.pos;
-        }, 0);
-
-        rdChartData.datasets.push({
-          label: selectedModelSm3,
+        if (selectedModelSm3) {
+          datasets.push({
+            label: selectedModelSm3,
+            data: [
+              (aspectSm3.camera.neu / totalScoreSm3) * 10,
+              (aspectSm3.battery.neu / totalScoreSm3) * 10,
+              (aspectSm3.screen.neu / totalScoreSm3) * 10,
+              (aspectSm3.performance.neu / totalScoreSm3) * 10,
+              (aspectSm3.price.neu / totalScoreSm3) * 10
+            ],
+            backgroundColor: 'rgb(104, 149, 210, 0.5)'
+          });
+        }
+      } else if (selectedSentimentsFilter === 'neg') {
+        datasets = [{
+          label: selectedModelSm1,
           data: [
-            (aspectSm3.camera.pos / totalPosScoreSm3) * 10,
-            (aspectSm3.battery.pos / totalPosScoreSm3) * 10,
-            (aspectSm3.screen.pos / totalPosScoreSm3) * 10,
-            (aspectSm3.performance.pos / totalPosScoreSm3) * 10,
-            (aspectSm3.price.pos / totalPosScoreSm3) * 10
+            (aspectSm1.camera.neg / totalScoreSm1) * 10,
+            (aspectSm1.battery.neg / totalScoreSm1) * 10,
+            (aspectSm1.screen.neg / totalScoreSm1) * 10,
+            (aspectSm1.performance.neg / totalScoreSm1) * 10,
+            (aspectSm1.price.neg / totalScoreSm1) * 10
+          ],
+          backgroundColor: 'rgb(208, 72, 72, 0.2)',
+          borderColor: 'rgb(208, 72, 72)',
+        },
+        {
+          label: selectedModelSm2,
+          data: [
+            (aspectSm2.camera.neg / totalScoreSm2) * 10,
+            (aspectSm2.battery.neg / totalScoreSm2) * 10,
+            (aspectSm2.screen.neg / totalScoreSm2) * 10,
+            (aspectSm2.performance.neg / totalScoreSm2) * 10,
+            (aspectSm2.price.neg / totalScoreSm2) * 10
           ],
           backgroundColor: 'rgb(104, 149, 210, 0.2)',
           borderColor: 'rgb(104, 149, 210)'
-        });
+        }];
+
+        if (selectedModelSm3) {
+          datasets.push({
+            label: selectedModelSm3,
+            data: [
+              (aspectSm3.camera.neg / totalScoreSm3) * 10,
+              (aspectSm3.battery.neg / totalScoreSm3) * 10,
+              (aspectSm3.screen.neg / totalScoreSm3) * 10,
+              (aspectSm3.performance.neg / totalScoreSm3) * 10,
+              (aspectSm3.price.neg / totalScoreSm3) * 10
+            ],
+            backgroundColor: 'rgb(104, 149, 210, 0.5)'
+          });
+        }
+      } else {
+        datasets = [{
+          label: selectedModelSm1,
+          data: [
+            (aspectSm1.camera.pos / totalScoreSm1) * 10,
+            (aspectSm1.battery.pos / totalScoreSm1) * 10,
+            (aspectSm1.screen.pos / totalScoreSm1) * 10,
+            (aspectSm1.performance.pos / totalScoreSm1) * 10,
+            (aspectSm1.price.pos / totalScoreSm1) * 10
+          ],
+          backgroundColor: 'rgb(208, 72, 72, 0.2)',
+          borderColor: 'rgb(208, 72, 72)',
+        },
+        {
+          label: selectedModelSm2,
+          data: [
+            (aspectSm2.camera.pos / totalScoreSm2) * 10,
+            (aspectSm2.battery.pos / totalScoreSm2) * 10,
+            (aspectSm2.screen.pos / totalScoreSm2) * 10,
+            (aspectSm2.performance.pos / totalScoreSm2) * 10,
+            (aspectSm2.price.pos / totalScoreSm2) * 10
+          ],
+          backgroundColor: 'rgb(104, 149, 210, 0.2)',
+          borderColor: 'rgb(104, 149, 210)'
+        }];
+
+        if (selectedModelSm3) {
+          datasets.push({
+            label: selectedModelSm3,
+            data: [
+              (aspectSm3.camera.pos / totalScoreSm3) * 10,
+              (aspectSm3.battery.pos / totalScoreSm3) * 10,
+              (aspectSm3.screen.pos / totalScoreSm3) * 10,
+              (aspectSm3.performance.pos / totalScoreSm3) * 10,
+              (aspectSm3.price.pos / totalScoreSm3) * 10
+            ],
+            backgroundColor: 'rgb(104, 149, 210, 0.5)'
+          });
+        }
       }
+
+      let rdChartData = {
+        labels: ["Camera", "Battery", "Screen", "Performance", "Price"],
+        datasets: datasets
+      };
 
       const rdChartContext = rdChartElement.getContext('2d');
       // Create the radar chart
@@ -461,7 +650,7 @@ export default function compare() {
           plugins: {
             title: {
               display: true,
-              text: "Score of All Aspect (Positive)",
+              text: `Score of All Aspect (${selectedSentimentsFilter === 'neu' ? 'Neutral' : selectedSentimentsFilter === 'neg' ? 'Negative' : 'Positive'})`,
               font: {
                 size: 12
               }
@@ -482,7 +671,6 @@ export default function compare() {
             }
           }
         },
-
       });
 
       // Cleanup function to destroy the chart instance
@@ -490,7 +678,7 @@ export default function compare() {
         RadarChart.destroy();
       };
     }
-  }, [aspectSm1, selectedModelSm1, aspectSm2, selectedModelSm2, aspectSm3, selectedModelSm3]);
+  }, [aspectSm1, selectedModelSm1, aspectSm2, selectedModelSm2, aspectSm3, selectedModelSm3, selectedSentimentsFilter]);
 
 
   useEffect(() => {
@@ -633,23 +821,71 @@ export default function compare() {
       stBarChartAspectElement.height = stBarChartAspectElement.parentElement.offsetHeight;
       const stBarChartAspectContext = stBarChartAspectElement.getContext('2d');
 
-      let datasets = [{
-        label: selectedModelSm1,
-        data: [aspectSm1.camera.pos, aspectSm1.battery.pos, aspectSm1.screen.pos, aspectSm1.performance.pos, aspectSm1.price.pos],
-        backgroundColor: 'rgb(208, 72, 72, 0.5)'
-      }, {
-        label: selectedModelSm2,
-        data: [aspectSm2.camera.pos, aspectSm2.battery.pos, aspectSm2.screen.pos, aspectSm2.performance.pos, aspectSm2.price.pos],
-        backgroundColor: 'rgb(104, 149, 210, 0.5)'
-      }];
+      const sentimentLabels = {
+        'pos': 'Positive',
+        'neg': 'Negative',
+        'neu': 'Neutral'
+      };
 
-      // Add dataset for selectedModelSm3 if it is selected
-      if (selectedModelSm3) {
-        datasets.push({
-          label: selectedModelSm3,
-          data: [aspectSm3.camera.pos, aspectSm3.battery.pos, aspectSm3.screen.pos, aspectSm3.performance.pos, aspectSm3.price.pos],
+      let datasets = [];
+
+      if (selectedSentimentsFilter === 'neu') { // Filter positive sentiments
+        datasets = [{
+          label: selectedModelSm1,
+          data: [aspectSm1.camera.neu, aspectSm1.battery.neu, aspectSm1.screen.neu, aspectSm1.performance.neu, aspectSm1.price.neu],
+          backgroundColor: 'rgb(208, 72, 72, 0.5)'
+        }, {
+          label: selectedModelSm2,
+          data: [aspectSm2.camera.neu, aspectSm2.battery.neu, aspectSm2.screen.neu, aspectSm2.performance.neu, aspectSm2.price.neu],
           backgroundColor: 'rgb(104, 149, 210, 0.5)'
-        });
+        }];
+
+        // Add dataset for selectedModelSm3 if it is selected
+        if (selectedModelSm3) {
+          datasets.push({
+            label: selectedModelSm3,
+            data: [aspectSm3.camera.neu, aspectSm3.battery.neu, aspectSm3.screen.neu, aspectSm3.performance.neu, aspectSm3.price.neu],
+            backgroundColor: 'rgb(104, 149, 210, 0.5)'
+          });
+        }
+      } else if (selectedSentimentsFilter === 'neg') { // Filter negative sentiments
+        datasets = [{
+          label: selectedModelSm1,
+          data: [aspectSm1.camera.neg, aspectSm1.battery.neg, aspectSm1.screen.neg, aspectSm1.performance.neg, aspectSm1.price.neg],
+          backgroundColor: 'rgb(208, 72, 72, 0.5)'
+        }, {
+          label: selectedModelSm2,
+          data: [aspectSm2.camera.neg, aspectSm2.battery.neg, aspectSm2.screen.neg, aspectSm2.performance.neg, aspectSm2.price.neg],
+          backgroundColor: 'rgb(104, 149, 210, 0.5)'
+        }];
+
+        // Add dataset for selectedModelSm3 if it is selected
+        if (selectedModelSm3) {
+          datasets.push({
+            label: selectedModelSm3,
+            data: [aspectSm3.camera.neg, aspectSm3.battery.neg, aspectSm3.screen.neg, aspectSm3.performance.neg, aspectSm3.price.neg],
+            backgroundColor: 'rgb(104, 149, 210, 0.5)'
+          });
+        }
+      } else {
+        datasets = [{
+          label: selectedModelSm1,
+          data: [aspectSm1.camera.pos, aspectSm1.battery.pos, aspectSm1.screen.pos, aspectSm1.performance.pos, aspectSm1.price.pos],
+          backgroundColor: 'rgb(208, 72, 72, 0.5)'
+        }, {
+          label: selectedModelSm2,
+          data: [aspectSm2.camera.pos, aspectSm2.battery.pos, aspectSm2.screen.pos, aspectSm2.performance.pos, aspectSm2.price.pos],
+          backgroundColor: 'rgb(104, 149, 210, 0.5)'
+        }];
+
+        // Add dataset for selectedModelSm3 if it is selected
+        if (selectedModelSm3) {
+          datasets.push({
+            label: selectedModelSm3,
+            data: [aspectSm3.camera.pos, aspectSm3.battery.pos, aspectSm3.screen.pos, aspectSm3.performance.pos, aspectSm3.price.pos],
+            backgroundColor: 'rgb(104, 149, 210, 0.5)'
+          });
+        }
       }
 
       let stackBarChartAspect = new Chart(stBarChartAspectContext, {
@@ -663,7 +899,7 @@ export default function compare() {
           plugins: {
             title: {
               display: true,
-              text: 'Count of All Aspect (Positive)',
+              text: `Count of All Aspect (${sentimentLabels[selectedSentimentsFilter] || 'Positive'})`,
               size: 12
             },
             legend: {
@@ -702,7 +938,8 @@ export default function compare() {
         stackBarChartAspect.destroy();
       };
     }
-  }, [aspectSm1, aspectSm2, aspectSm3, selectedModelSm1, selectedModelSm2, selectedModelSm3]);
+  }, [aspectSm1, aspectSm2, aspectSm3, selectedModelSm1, selectedModelSm2, selectedModelSm3, selectedSentimentsFilter]);
+
 
 
   useEffect(() => {
@@ -805,7 +1042,6 @@ export default function compare() {
         }
       `}</style>
       <Navbar />
-      <>{showNeutralData}</>
       <div className="md:container md:mx-auto mt-3">
         <div className="grid grid-cols-3 gap-3">
           <div className="grid grid-cols-5 gap-2">
@@ -829,7 +1065,9 @@ export default function compare() {
                 isRequired
                 variant="bordered"
                 label="Select Smartphone"
-                items={smartphoneModelsSm1.map(model => ({ label: model, value: model }))}
+                items={smartphoneModelsSm1
+                  .filter(model => model !== selectedModelSm2 && model !== selectedModelSm3) // Filter out selected smartphones from other elements
+                  .map(model => ({ label: model, value: model }))}
                 selectedKey={selectedModelSm1}
                 onSelectionChange={setSelectedModelSm1}
                 // disabled={!selectedBrand}
@@ -862,7 +1100,9 @@ export default function compare() {
                 isRequired
                 variant="bordered"
                 label="Select Smartphone"
-                items={smartphoneModelsSm2.map(model => ({ label: model, value: model }))}
+                items={smartphoneModelsSm2
+                  .filter(model => model !== selectedModelSm1 && model !== selectedModelSm3) // Filter out selected smartphones from other elements
+                  .map(model => ({ label: model, value: model }))}
                 selectedKey={selectedModelSm2}
                 onSelectionChange={setSelectedModelSm2}
                 // disabled={!selectedBrand}
@@ -892,7 +1132,9 @@ export default function compare() {
               <Autocomplete
                 variant="bordered"
                 label="Select Smartphone"
-                items={smartphoneModelsSm3.map(model => ({ label: model, value: model }))}
+                items={smartphoneModelsSm3
+                  .filter(model => model !== selectedModelSm1 && model !== selectedModelSm2) // Filter out selected smartphones from other elements
+                  .map(model => ({ label: model, value: model }))}
                 selectedKey={selectedModelSm3}
                 onSelectionChange={setSelectedModelSm3}
                 // disabled={!selectedBrand}
@@ -912,6 +1154,42 @@ export default function compare() {
             <Autocomplete
               classNames="w-full"
               variant="bordered"
+              label="Select Smartphone"
+              items={[
+                { value: selectedModelSm1, label: selectedModelSm1 },
+                { value: selectedModelSm2, label: selectedModelSm2 },
+                { value: selectedModelSm3, label: selectedModelSm3 }
+              ].filter(item => item.value !== "")}
+              selectedKey={selectedModelFilter}
+              onSelectionChange={handleSelectModelSentimentchange}
+            >
+              {(item) => <AutocompleteItem key={item.value}>{item.label}</AutocompleteItem>}
+            </Autocomplete>
+          </div>
+          <div className="w-full sm:w-2/3 md:w-1/2 lg:w-1/3 my-2 flex justify-end bg-white rounded-[12px]">
+            <Autocomplete
+              classNames="w-full"
+              variant="bordered"
+              label="Select Aspect"
+              items={
+                [
+                  { value: 'Camera', label: 'Camera' },
+                  { value: 'Battery', label: 'Battery' },
+                  { value: 'Screen', label: 'Screen' },
+                  { value: 'Performance', label: 'Performance' },
+                  { value: 'Price', label: 'Price' },
+                ]
+              }
+              selectedKey={selectedAspectsFilter}
+              onSelectionChange={handleSelectAspectSentimentchange}
+            >
+              {(item) => <AutocompleteItem key={item.value}>{item.label}</AutocompleteItem>}
+            </Autocomplete>
+          </div>
+          <div className="w-full sm:w-2/3 md:w-1/2 lg:w-1/3 my-2 flex justify-end bg-white rounded-[12px]">
+            <Autocomplete
+              classNames="w-full"
+              variant="bordered"
               label="Select Sentiment"
               items={!showNeutralData ?
                 [
@@ -923,8 +1201,8 @@ export default function compare() {
                   { value: 'neg', label: 'Negative' },
                   { value: 'neu', label: 'Neutral' }
                 ]}
-              selectedKey={selectedSentiments}
-              onSelectionChange={setSelectedSentiments}
+              selectedKey={selectedSentimentsFilter}
+              onSelectionChange={handleSelectSentimentchange}
             >
               {(item) => <AutocompleteItem key={item.value}>{item.label}</AutocompleteItem>}
             </Autocomplete>
@@ -943,16 +1221,17 @@ export default function compare() {
               <div className="col-span-5 overflow-y-auto shadow-md p-2 my-2 bg-white max-h-screen" style={{ borderRadius: "20px", maxHeight: "81vh" }}>
                 <table id="dataTable" className="md:w-full md:h-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 px-5">
                   <colgroup>
-                    <col style={{ width: "5%" }} />
-                    <col style={{ width: "60%" }} />
-                    <col style={{ width: "25%" }} />
-                    <col style={{ width: "10%" }} />
+                    <col style={{ width: "5%", maxWidth: "5%" }} />
+                    <col style={{ width: "60%", maxWidth: "60%" }} />
+                    <col style={{ width: "25%", maxWidth: "25%" }} />
+                    <col style={{ width: "10%", maxWidth: "10%" }} />
                   </colgroup>
                   <thead className="text-base">
                     <tr>
                       <th scope="col" className="pl-5 pr-1 py-2">
                       </th>
-                      <th scope="col" className="px-2 py-2">Overall Review
+                      <th scope="col" className="px-2 py-2">
+                        {selectedAspectsFilter ? `${selectedAspectsFilter} Review` : "Overall Review"}
                       </th>
                       <th scope="col" className="px-3 py-2">
                         Model
@@ -963,32 +1242,60 @@ export default function compare() {
                     </tr>
                   </thead>
                   <tbody>
-                    {filterReviewsBySentiment().map((review, index) => (
-                      <tr key={index}>
-                        <th scope="row" className="pl-5 pr-1 py-3 font-medium text-gray-500 whitespace-nowrap dark:text-white">
-                          {index + 1}
-                        </th>
-                        <td className="px-2 py-2">
-                          {review.textDisplay}
-                        </td>
-                        <td className="px-3 py-2">
-                          {review.smartphoneName}
-                        </td>
-                        <td className="px-2 py-2 text-center">
-                          <span style={{
-                            padding: "3px",
-                            border: "1px solid #DCF4E7",
-                            borderRadius: "5px",
-                            backgroundColor: getBackgroundColor(review.Sentiment_Label),
-                            color: getTextColor(review.Sentiment_Label),
-                            display: 'inline-block',
-                            padding: '4px 4px'
-                          }}>
-                            {getSentimentText(review.Sentiment_Label)}
-                          </span>
-                        </td>
-                      </tr>
-                    ))}
+                    {selectedAspectsFilter !== "" ? (
+                      filterReviewsByAspect().map((review, index) => (
+                        <tr key={`aspect_${index}`}>
+                          <th scope="row" className="pl-5 pr-1 py-3 font-medium text-gray-500 whitespace-nowrap dark:text-white">
+                            {index + 1}
+                          </th>
+                          <td className="px-2 py-2">
+                            {review.textDisplay_aspect}
+                          </td>
+                          <td className="px-3 py-2">
+                            {review.smartphoneName}
+                          </td>
+                          <td className="px-2 py-2 text-center">
+                            <span style={{
+                              padding: "3px",
+                              border: "1px solid #DCF4E7",
+                              borderRadius: "5px",
+                              backgroundColor: getBackgroundColor(review.Aspect_Sentiment_Label),
+                              color: getTextColor(review.Aspect_Sentiment_Label),
+                              display: 'inline-block',
+                            }}>
+                              {getSentimentText(review.Aspect_Sentiment_Label)}
+                            </span>
+                          </td>
+                        </tr>
+                      ))
+                    ) : (
+                      filterReviewsBySentiment().map((review, index) => (
+                        <tr key={`sentiment_${index}`}>
+                          <th scope="row" className="pl-5 pr-1 py-3 font-medium text-gray-500 whitespace-nowrap dark:text-white">
+                            {index + 1}
+                          </th>
+                          <td className="px-2 py-2">
+                            {review.textDisplay}
+                          </td>
+                          <td className="px-3 py-2">
+                            {review.smartphoneName}
+                          </td>
+                          <td className="px-2 py-2 text-center">
+                            <span style={{
+                              padding: "3px",
+                              border: "1px solid #DCF4E7",
+                              borderRadius: "5px",
+                              backgroundColor: getBackgroundColor(review.Sentiment_Label),
+                              color: getTextColor(review.Sentiment_Label),
+                              display: 'inline-block',
+                              padding: '4px 4px'
+                            }}>
+                              {getSentimentText(review.Sentiment_Label)}
+                            </span>
+                          </td>
+                        </tr>
+                      ))
+                    )}
                   </tbody>
                 </table>
               </div>
