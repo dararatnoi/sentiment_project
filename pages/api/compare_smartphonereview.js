@@ -22,7 +22,7 @@ export default async function handler(req, res) {
             smartphoneName: item.keyword_search,
             Sentiment_Label: item.Sentiment_Label,
             // processed: item.processed,
-            Aspects: item.Aspects
+            // Aspects: item.Aspects
         }));
 
         res.status(200).json(formattedData);
