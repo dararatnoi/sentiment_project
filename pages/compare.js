@@ -1219,7 +1219,7 @@ export default function compare() {
           <div className="grid grid-cols-11 gap-3">
             <div className="col-span-5 grid grid-cols-5">
               <div className="col-span-5 overflow-y-auto shadow-md p-2 my-2 bg-white max-h-screen" style={{ borderRadius: "20px", maxHeight: "81vh" }}>
-                <table id="dataTable" className="md:w-full md:h-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 px-5">
+                <table id="dataTable" className="md:w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 px-5">
                   <colgroup>
                     <col style={{ width: "5%", maxWidth: "5%" }} />
                     <col style={{ width: "60%", maxWidth: "60%" }} />
@@ -1288,7 +1288,6 @@ export default function compare() {
                               backgroundColor: getBackgroundColor(review.Sentiment_Label),
                               color: getTextColor(review.Sentiment_Label),
                               display: 'inline-block',
-                              padding: '4px 4px'
                             }}>
                               {getSentimentText(review.Sentiment_Label)}
                             </span>
