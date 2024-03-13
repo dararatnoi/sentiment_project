@@ -315,7 +315,7 @@ export default function compare() {
         setIsLoaded(true);
         const selectedSmartphones = [selectedModelSm1, selectedModelSm2, selectedModelSm3].filter(model => model);
         const promises = selectedSmartphones.map(model =>
-          axios.get(`/api/compare_smartphoneReview?smartphone=${encodeURIComponent(model)}&selectedAspect=${encodeURIComponent(selectedAspectsFilter)}`));
+          axios.get(`/api/compare_smartphonereview?smartphone=${encodeURIComponent(model)}&selectedAspect=${encodeURIComponent(selectedAspectsFilter)}`));
 
         const responses = await Promise.all(promises);
         const reviewData = responses.map(response => response.data);
