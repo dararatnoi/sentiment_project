@@ -41,7 +41,7 @@ export default function Home() {
   const barChartRef = useRef(null)
   const barHorizontalChartRef = useRef(null)
   const [selectAspect, setSelectAspect] = React.useState(new Set(["Camera", "Battery", "Screen", "Performance", "Price"]));
-  const [Modelasp, setAspect] = React.useState(["Camera", "Battery", "Screen", "Performance", "Price"]);
+  const [Modelasp, setAspect] = React.useState(["Camera", "Battery", "Screen", "Performance", "Price"]); //ไว้แสดง
   const [aspectsData, setAspectsData] = useState({})
   const [reviews, setReviews] = useState([]);
 
@@ -546,7 +546,7 @@ export default function Home() {
       <div className="container mx-auto mt-8 ">
         <div className="flex flex-wrap -m-3 mb-5">
           <div className="w-full sm:w-1/2 md:w-1/4 p-3">
-            <Skeleton isLoaded={statusData} className="  shadow-md rounded-[20px]">
+            {/* <Skeleton isLoaded={statusData} className="  shadow-md rounded-[20px]"> */}
               <div className="bg-custom-blue text-white shadow-md rounded-[20px] p-4 py-6 pb-8 flex justify-between">
                 <div>
                   <h3 className="text-2xl font-bold text-white">{count_all.toLocaleString()}</h3>
@@ -555,11 +555,11 @@ export default function Home() {
                 </div>
                 <span className="material-icons text-3xl">mode_comment</span>
               </div>
-            </Skeleton>
+            {/* </Skeleton> */}
           </div>
 
           <div className="w-full sm:w-1/2 md:w-1/4 p-3">
-            <Skeleton isLoaded={statusData} className="  shadow-md rounded-[20px]">
+            {/* <Skeleton isLoaded={statusData} className="  shadow-md rounded-[20px]"> */}
               <div className="bg-custom-green text-white shadow-md rounded-[20px] p-4 py-6 pb-8 flex justify-between">
                 <div>
                   <h3 className="text-2xl font-bold">
@@ -571,11 +571,11 @@ export default function Home() {
                 </div>
                 <span className="material-icons text-3xl">sentiment_satisfied_alt</span>
               </div>
-            </Skeleton>
+            {/* </Skeleton> */}
           </div>
 
           <div className="w-full sm:w-1/2 md:w-1/4 p-3">
-            <Skeleton isLoaded={statusData} className="  shadow-md rounded-[20px]">
+            {/* <Skeleton isLoaded={statusData} className="  shadow-md rounded-[20px]"> */}
               <div className="bg-custom-yellow text-white shadow-md rounded-[20px] p-4 py-6 pb-8 flex justify-between">
                 <div>
                   <h3 className="text-2xl font-bold">
@@ -588,11 +588,11 @@ export default function Home() {
                 </div>
                 <span className="material-icons text-3xl">sentiment_neutral</span>
               </div>
-            </Skeleton>
+            {/* </Skeleton> */}
           </div>
 
           <div className="w-full sm:w-1/2 md:w-1/4 p-3">
-            <Skeleton isLoaded={statusData} className="  shadow-md rounded-[20px]">
+            {/* <Skeleton isLoaded={statusData} className="  shadow-md rounded-[20px]"> */}
               <div className="bg-custom-red text-white shadow-md rounded-[20px] p-4 py-6 pb-8 flex justify-between">
                 <div>
                   <h3 className="text-2xl font-bold">
@@ -604,12 +604,12 @@ export default function Home() {
                 </div>
                 <span className="material-icons text-3xl">sentiment_very_dissatisfied</span>
               </div>
-            </Skeleton>
+            {/* </Skeleton> */}
           </div>
         </div>
         <div className="row col-12  mb-5">
           <div className="w-full">
-            <Skeleton isLoaded={statusData} className="shadow-md rounded-[20px] h-10%">
+            {/* <Skeleton isLoaded={statusData} className="shadow-md rounded-[20px] h-10%"> */}
               <div className="card border-0  p-4"
                 style={{
                   boxShadow: "5px 5px 5px 5px rgba(197, 197, 197, 0.2)",
@@ -639,7 +639,7 @@ export default function Home() {
                   </div>
                 </div>
               </div>
-            </Skeleton>
+            {/* </Skeleton> */}
           </div>
         </div>
 
@@ -688,7 +688,7 @@ export default function Home() {
             label="Aspects"
             placeholder="Select Aspect"
             selectionMode="multiple"
-            selectedKeys={[...selectAspect]}
+            selectedKeys={selectAspect}
             onSelectionChange={(selected) => setSelectAspect(new Set(selected))}
             className="max-w-xs justify-end flex"
             // style={{ width: '200px', height: '50px' }}
