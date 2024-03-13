@@ -688,7 +688,7 @@ export default function Home() {
             label="Aspects"
             placeholder="Select Aspect"
             selectionMode="multiple"
-            selectedKeys={[...selectAspect]}
+            selectedKeys={selectAspect}
             onSelectionChange={(selected) => setSelectAspect(new Set(selected))}
             className="max-w-xs justify-end flex"
             // style={{ width: '200px', height: '50px' }}

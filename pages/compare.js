@@ -398,8 +398,6 @@ export default function compare() {
     }
   }, [selectedModelSm1, selectedModelSm2, selectedModelSm3]);
 
-
-
   useEffect(() => {
     const fetchSmartphoneSentimentData = async (smartphoneName, setOverview, setAspect) => {
       try {
@@ -529,117 +527,120 @@ export default function compare() {
         datasets = [{
           label: selectedModelSm1,
           data: [
-            (aspectSm1.camera.neu / totalScoreSm1) * 10,
-            (aspectSm1.battery.neu / totalScoreSm1) * 10,
-            (aspectSm1.screen.neu / totalScoreSm1) * 10,
-            (aspectSm1.performance.neu / totalScoreSm1) * 10,
-            (aspectSm1.price.neu / totalScoreSm1) * 10
+            (aspectSm1.camera.neu / totalScoreSm1) * 100,
+            (aspectSm1.battery.neu / totalScoreSm1) * 100,
+            (aspectSm1.screen.neu / totalScoreSm1) * 100,
+            (aspectSm1.performance.neu / totalScoreSm1) * 100,
+            (aspectSm1.price.neu / totalScoreSm1) * 100
           ],
-          backgroundColor: 'rgb(208, 72, 72, 0.2)',
-          borderColor: 'rgb(208, 72, 72)',
+          backgroundColor: 'rgb(116, 105, 182, 0.2)',
+          borderColor: 'rgb(116, 105, 182)',
         },
         {
           label: selectedModelSm2,
           data: [
-            (aspectSm2.camera.neu / totalScoreSm2) * 10,
-            (aspectSm2.battery.neu / totalScoreSm2) * 10,
-            (aspectSm2.screen.neu / totalScoreSm2) * 10,
-            (aspectSm2.performance.neu / totalScoreSm2) * 10,
-            (aspectSm2.price.neu / totalScoreSm2) * 10
+            (aspectSm2.camera.neu / totalScoreSm2) * 100,
+            (aspectSm2.battery.neu / totalScoreSm2) * 100,
+            (aspectSm2.screen.neu / totalScoreSm2) * 100,
+            (aspectSm2.performance.neu / totalScoreSm2) * 100,
+            (aspectSm2.price.neu / totalScoreSm2) * 100
           ],
-          backgroundColor: 'rgb(104, 149, 210, 0.2)',
-          borderColor: 'rgb(104, 149, 210)'
+          backgroundColor: 'rgb(211, 118, 118, 0.2)',
+          borderColor: 'rgb(211, 118, 118)',
         }];
 
         if (selectedModelSm3) {
           datasets.push({
             label: selectedModelSm3,
             data: [
-              (aspectSm3.camera.neu / totalScoreSm3) * 10,
-              (aspectSm3.battery.neu / totalScoreSm3) * 10,
-              (aspectSm3.screen.neu / totalScoreSm3) * 10,
-              (aspectSm3.performance.neu / totalScoreSm3) * 10,
-              (aspectSm3.price.neu / totalScoreSm3) * 10
+              (aspectSm3.camera.neu / totalScoreSm3) * 100,
+              (aspectSm3.battery.neu / totalScoreSm3) * 100,
+              (aspectSm3.screen.neu / totalScoreSm3) * 100,
+              (aspectSm3.performance.neu / totalScoreSm3) * 100,
+              (aspectSm3.price.neu / totalScoreSm3) * 100
             ],
-            backgroundColor: 'rgb(104, 149, 210, 0.5)'
+            backgroundColor: 'rgb(45, 149, 150, 0.2)',
+            borderColor: 'rgb(45, 149, 150)'
           });
         }
       } else if (selectedSentimentsFilter === 'neg') {
         datasets = [{
           label: selectedModelSm1,
           data: [
-            (aspectSm1.camera.neg / totalScoreSm1) * 10,
-            (aspectSm1.battery.neg / totalScoreSm1) * 10,
-            (aspectSm1.screen.neg / totalScoreSm1) * 10,
-            (aspectSm1.performance.neg / totalScoreSm1) * 10,
-            (aspectSm1.price.neg / totalScoreSm1) * 10
+            (aspectSm1.camera.neg / totalScoreSm1) * 100,
+            (aspectSm1.battery.neg / totalScoreSm1) * 100,
+            (aspectSm1.screen.neg / totalScoreSm1) * 100,
+            (aspectSm1.performance.neg / totalScoreSm1) * 100,
+            (aspectSm1.price.neg / totalScoreSm1) * 100
           ],
-          backgroundColor: 'rgb(208, 72, 72, 0.2)',
-          borderColor: 'rgb(208, 72, 72)',
+          backgroundColor: 'rgb(116, 105, 182, 0.2)',
+          borderColor: 'rgb(116, 105, 182)'
         },
         {
           label: selectedModelSm2,
           data: [
-            (aspectSm2.camera.neg / totalScoreSm2) * 10,
-            (aspectSm2.battery.neg / totalScoreSm2) * 10,
-            (aspectSm2.screen.neg / totalScoreSm2) * 10,
-            (aspectSm2.performance.neg / totalScoreSm2) * 10,
-            (aspectSm2.price.neg / totalScoreSm2) * 10
+            (aspectSm2.camera.neg / totalScoreSm2) * 100,
+            (aspectSm2.battery.neg / totalScoreSm2) * 100,
+            (aspectSm2.screen.neg / totalScoreSm2) * 100,
+            (aspectSm2.performance.neg / totalScoreSm2) * 100,
+            (aspectSm2.price.neg / totalScoreSm2) * 100
           ],
-          backgroundColor: 'rgb(104, 149, 210, 0.2)',
-          borderColor: 'rgb(104, 149, 210)'
+          backgroundColor: 'rgb(211, 118, 118, 0.2)',
+          borderColor: 'rgb(211, 118, 118)'
         }];
 
         if (selectedModelSm3) {
           datasets.push({
             label: selectedModelSm3,
             data: [
-              (aspectSm3.camera.neg / totalScoreSm3) * 10,
-              (aspectSm3.battery.neg / totalScoreSm3) * 10,
-              (aspectSm3.screen.neg / totalScoreSm3) * 10,
-              (aspectSm3.performance.neg / totalScoreSm3) * 10,
-              (aspectSm3.price.neg / totalScoreSm3) * 10
+              (aspectSm3.camera.neg / totalScoreSm3) * 100,
+              (aspectSm3.battery.neg / totalScoreSm3) * 100,
+              (aspectSm3.screen.neg / totalScoreSm3) * 100,
+              (aspectSm3.performance.neg / totalScoreSm3) * 100,
+              (aspectSm3.price.neg / totalScoreSm3) * 100
             ],
-            backgroundColor: 'rgb(104, 149, 210, 0.5)'
+            backgroundColor: 'rgb(45, 149, 150, 0.2)',
+            borderColor: 'rgb(45, 149, 150)'
           });
         }
       } else {
         datasets = [{
           label: selectedModelSm1,
           data: [
-            (aspectSm1.camera.pos / totalScoreSm1) * 10,
-            (aspectSm1.battery.pos / totalScoreSm1) * 10,
-            (aspectSm1.screen.pos / totalScoreSm1) * 10,
-            (aspectSm1.performance.pos / totalScoreSm1) * 10,
-            (aspectSm1.price.pos / totalScoreSm1) * 10
+            (aspectSm1.camera.pos / totalScoreSm1) * 100,
+            (aspectSm1.battery.pos / totalScoreSm1) * 100,
+            (aspectSm1.screen.pos / totalScoreSm1) * 100,
+            (aspectSm1.performance.pos / totalScoreSm1) * 100,
+            (aspectSm1.price.pos / totalScoreSm1) * 100
           ],
-          backgroundColor: 'rgb(208, 72, 72, 0.2)',
-          borderColor: 'rgb(208, 72, 72)',
+          backgroundColor: 'rgb(116, 105, 182, 0.2)',
+          borderColor: 'rgb(116, 105, 182)'
         },
         {
           label: selectedModelSm2,
           data: [
-            (aspectSm2.camera.pos / totalScoreSm2) * 10,
-            (aspectSm2.battery.pos / totalScoreSm2) * 10,
-            (aspectSm2.screen.pos / totalScoreSm2) * 10,
-            (aspectSm2.performance.pos / totalScoreSm2) * 10,
-            (aspectSm2.price.pos / totalScoreSm2) * 10
+            (aspectSm2.camera.pos / totalScoreSm2) * 100,
+            (aspectSm2.battery.pos / totalScoreSm2) * 100,
+            (aspectSm2.screen.pos / totalScoreSm2) * 100,
+            (aspectSm2.performance.pos / totalScoreSm2) * 100,
+            (aspectSm2.price.pos / totalScoreSm2) * 100
           ],
-          backgroundColor: 'rgb(104, 149, 210, 0.2)',
-          borderColor: 'rgb(104, 149, 210)'
+          backgroundColor: 'rgb(211, 118, 118, 0.2)',
+          borderColor: 'rgb(211, 118, 118)'
         }];
 
         if (selectedModelSm3) {
           datasets.push({
             label: selectedModelSm3,
             data: [
-              (aspectSm3.camera.pos / totalScoreSm3) * 10,
-              (aspectSm3.battery.pos / totalScoreSm3) * 10,
-              (aspectSm3.screen.pos / totalScoreSm3) * 10,
-              (aspectSm3.performance.pos / totalScoreSm3) * 10,
-              (aspectSm3.price.pos / totalScoreSm3) * 10
+              (aspectSm3.camera.pos / totalScoreSm3) * 100,
+              (aspectSm3.battery.pos / totalScoreSm3) * 100,
+              (aspectSm3.screen.pos / totalScoreSm3) * 100,
+              (aspectSm3.performance.pos / totalScoreSm3) * 100,
+              (aspectSm3.price.pos / totalScoreSm3) * 100
             ],
-            backgroundColor: 'rgb(104, 149, 210, 0.5)'
+            backgroundColor: 'rgb(45, 149, 150, 0.2)',
+            borderColor: 'rgb(45, 149, 150)'
           });
         }
       }
@@ -666,6 +667,10 @@ export default function compare() {
             }
           },
           elements: {
+            point: {
+              radius: 0, // Set the radius of the data points
+              borderWidth: 2 // Set the border width of the data points
+            },
             line: {
               borderWidth: 1
             }
@@ -842,11 +847,11 @@ export default function compare() {
         datasets = [{
           label: selectedModelSm1,
           data: [aspectSm1.camera.neu, aspectSm1.battery.neu, aspectSm1.screen.neu, aspectSm1.performance.neu, aspectSm1.price.neu],
-          backgroundColor: 'rgb(208, 72, 72, 0.5)'
+          backgroundColor: '#FF6600'
         }, {
           label: selectedModelSm2,
           data: [aspectSm2.camera.neu, aspectSm2.battery.neu, aspectSm2.screen.neu, aspectSm2.performance.neu, aspectSm2.price.neu],
-          backgroundColor: 'rgb(104, 149, 210, 0.5)'
+          backgroundColor: '#FFB669'
         }];
 
         // Add dataset for selectedModelSm3 if it is selected
@@ -854,18 +859,18 @@ export default function compare() {
           datasets.push({
             label: selectedModelSm3,
             data: [aspectSm3.camera.neu, aspectSm3.battery.neu, aspectSm3.screen.neu, aspectSm3.performance.neu, aspectSm3.price.neu],
-            backgroundColor: 'rgb(104, 149, 210, 0.5)'
+            backgroundColor: '#FFE3C7'
           });
         }
       } else if (selectedSentimentsFilter === 'neg') { // Filter negative sentiments
         datasets = [{
           label: selectedModelSm1,
           data: [aspectSm1.camera.neg, aspectSm1.battery.neg, aspectSm1.screen.neg, aspectSm1.performance.neg, aspectSm1.price.neg],
-          backgroundColor: 'rgb(208, 72, 72, 0.5)'
+          backgroundColor: '#a70000'
         }, {
           label: selectedModelSm2,
           data: [aspectSm2.camera.neg, aspectSm2.battery.neg, aspectSm2.screen.neg, aspectSm2.performance.neg, aspectSm2.price.neg],
-          backgroundColor: 'rgb(104, 149, 210, 0.5)'
+          backgroundColor: '#ff5252'
         }];
 
         // Add dataset for selectedModelSm3 if it is selected
@@ -873,18 +878,18 @@ export default function compare() {
           datasets.push({
             label: selectedModelSm3,
             data: [aspectSm3.camera.neg, aspectSm3.battery.neg, aspectSm3.screen.neg, aspectSm3.performance.neg, aspectSm3.price.neg],
-            backgroundColor: 'rgb(104, 149, 210, 0.5)'
+            backgroundColor: '#ffbaba'
           });
         }
       } else {
         datasets = [{
           label: selectedModelSm1,
           data: [aspectSm1.camera.pos, aspectSm1.battery.pos, aspectSm1.screen.pos, aspectSm1.performance.pos, aspectSm1.price.pos],
-          backgroundColor: 'rgb(208, 72, 72, 0.5)'
+          backgroundColor: '#6ECCAF'
         }, {
           label: selectedModelSm2,
           data: [aspectSm2.camera.pos, aspectSm2.battery.pos, aspectSm2.screen.pos, aspectSm2.performance.pos, aspectSm2.price.pos],
-          backgroundColor: 'rgb(104, 149, 210, 0.5)'
+          backgroundColor: '#29ADB2'
         }];
 
         // Add dataset for selectedModelSm3 if it is selected
@@ -892,7 +897,7 @@ export default function compare() {
           datasets.push({
             label: selectedModelSm3,
             data: [aspectSm3.camera.pos, aspectSm3.battery.pos, aspectSm3.screen.pos, aspectSm3.performance.pos, aspectSm3.price.pos],
-            backgroundColor: 'rgb(104, 149, 210, 0.5)'
+            backgroundColor: '#1B6B93'
           });
         }
       }
@@ -937,7 +942,7 @@ export default function compare() {
               }
             },
             y: {
-              beginAtZero: true
+              beginAtZero: true,
             }
           }
         }
@@ -981,10 +986,11 @@ export default function compare() {
       if (selectedModelSm3) {
         labels.push(selectedModelSm3);
         datasets[0].data.push(overviewSm3.pos);
-        datasets[1].data.push(overviewSm3.neg);
-
         if (showNeutralData) {
           datasets[1].data.push(overviewSm3.neu);
+          datasets[2].data.push(overviewSm3.neg);
+        }else{
+          datasets[1].data.push(overviewSm3.neg);
         }
       }
 
@@ -1033,6 +1039,9 @@ export default function compare() {
                 maxRotation: 90,
                 minRotation: 0
               }
+            },
+            y: {
+              max: 500
             }
           }
         }
@@ -1045,321 +1054,324 @@ export default function compare() {
 
   return (
     <>
-      <style jsx global>{`
+      {/* <style jsx global>{`
         body {
           background-color: #f0f0f0;
         }
-      `}</style>
-      <Navbar />
-      <div className="md:container md:mx-auto mt-3">
-        <div className="grid grid-cols-3 gap-3">
-          <div className="grid grid-cols-5 gap-2">
-            <div id="SelectBrandElm1" className="col-span-2 bg-white rounded-[12px]">
-              <Autocomplete
-                isRequired
-                variant="bordered"
-                label="Select Brand"
-                items={brandName.map(brand => ({ label: brand, value: brand }))}
-                selectedKey={selectedBrandSm1}
-                onSelectionChange={setSelectedBrandSm1}
-                className="max-w-xs"
-              >
-                {(item) => <AutocompleteItem key={item.value}>{item.label}</AutocompleteItem>}
-              </Autocomplete>
-            </div>
+      `}</style> */}
+      <div className="bg-costom-pbg w-full h-full pb-2">
+        <Navbar />
+        <div className="md:container md:mx-auto mt-3">
+          <div className="grid grid-cols-3 gap-3">
+            <div className="grid grid-cols-5 gap-2">
+              <div id="SelectBrandElm1" className="col-span-2 bg-white rounded-[12px]">
+                <Autocomplete
+                  isRequired
+                  variant="bordered"
+                  label="Select Brand"
+                  items={brandName.map(brand => ({ label: brand, value: brand }))}
+                  selectedKey={selectedBrandSm1}
+                  onSelectionChange={setSelectedBrandSm1}
+                  className="max-w-xs"
+                >
+                  {(item) => <AutocompleteItem key={item.value}>{item.label}</AutocompleteItem>}
+                </Autocomplete>
+              </div>
 
-            {/* Select Smartphones */}
-            <div id="SelectSmartphoneElm1" className="col-span-3 bg-white rounded-[12px]">
-              <Autocomplete
-                isRequired
-                variant="bordered"
-                label="Select Smartphone"
-                items={smartphoneModelsSm1
-                  .filter(model => model !== selectedModelSm2 && model !== selectedModelSm3) // Filter out selected smartphones from other elements
-                  .map(model => ({ label: model, value: model }))}
-                selectedKey={selectedModelSm1}
-                onSelectionChange={setSelectedModelSm1}
-                // disabled={!selectedBrand}
-                className="max-w-xs"
-                multiple
-              >
-                {(item) => <AutocompleteItem key={item.value}>{item.label}</AutocompleteItem>}
-              </Autocomplete>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-5 gap-2">
-            <div id="SelectBrandElm2" className="col-span-2 bg-white rounded-[12px]">
-              <Autocomplete
-                isRequired
-                variant="bordered"
-                label="Select Brand"
-                items={brandName.map(brand => ({ label: brand, value: brand }))}
-                selectedKey={selectedBrandSm2}
-                onSelectionChange={setSelectedBrandSm2}
-                className="max-w-xs"
-              >
-                {(item) => <AutocompleteItem key={item.value}>{item.label}</AutocompleteItem>}
-              </Autocomplete>
-            </div>
-
-            {/* Select Smartphones */}
-            <div id="SelectSmartphoneElm2" className="col-span-3 bg-white rounded-[12px]">
-              <Autocomplete
-                isRequired
-                variant="bordered"
-                label="Select Smartphone"
-                items={smartphoneModelsSm2
-                  .filter(model => model !== selectedModelSm1 && model !== selectedModelSm3) // Filter out selected smartphones from other elements
-                  .map(model => ({ label: model, value: model }))}
-                selectedKey={selectedModelSm2}
-                onSelectionChange={setSelectedModelSm2}
-                // disabled={!selectedBrand}
-                className="max-w-xs"
-                multiple
-              >
-                {(item) => <AutocompleteItem key={item.value}>{item.label}</AutocompleteItem>}
-              </Autocomplete>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-5 gap-2">
-            <div id="SelectBrandElm3" className="col-span-2 bg-white rounded-[12px]">
-              <Autocomplete
-                variant="bordered"
-                label="Select Brand"
-                items={brandName.map(brand => ({ label: brand, value: brand }))}
-                selectedKey={selectedBrandSm3}
-                onSelectionChange={setSelectedBrandSm3}
-                className="max-w-xs"
-              >
-                {(item) => <AutocompleteItem key={item.value}>{item.label}</AutocompleteItem>}
-              </Autocomplete>
-            </div>
-
-            <div id="SelectSmartphoneElm3" className="col-span-3 bg-white rounded-[12px]">
-              <Autocomplete
-                variant="bordered"
-                label="Select Smartphone"
-                items={smartphoneModelsSm3
-                  .filter(model => model !== selectedModelSm1 && model !== selectedModelSm2) // Filter out selected smartphones from other elements
-                  .map(model => ({ label: model, value: model }))}
-                selectedKey={selectedModelSm3}
-                onSelectionChange={setSelectedModelSm3}
-                // disabled={!selectedBrand}
-                className="max-w-xs"
-                multiple
-              >
-                {(item) => <AutocompleteItem key={item.value}>{item.label}</AutocompleteItem>}
-              </Autocomplete>
-            </div>
-          </div>
-
-        </div>
-      </div>
-      <div className="md:container md:mx-auto md:mt-1 md:mb-5 md:w-full md:h-full m-h-screen">
-        <div className="flex justify-center items-center">
-          <div className="w-full sm:w-2/3 md:w-1/2 lg:w-1/3 my-2 flex justify-end bg-white rounded-[12px]">
-            <Autocomplete
-              classNames="w-full"
-              variant="bordered"
-              label="Select Smartphone"
-              items={[
-                { value: selectedModelSm1, label: selectedModelSm1 },
-                { value: selectedModelSm2, label: selectedModelSm2 },
-                { value: selectedModelSm3, label: selectedModelSm3 }
-              ].filter(item => item.value !== "")}
-              selectedKey={selectedModelFilter}
-              onSelectionChange={handleSelectModelSentimentchange}
-            >
-              {(item) => <AutocompleteItem key={item.value}>{item.label}</AutocompleteItem>}
-            </Autocomplete>
-          </div>
-          <div className="w-full sm:w-2/3 md:w-1/2 lg:w-1/3 my-2 flex justify-end bg-white rounded-[12px]">
-            <Autocomplete
-              classNames="w-full"
-              variant="bordered"
-              label="Select Aspect"
-              items={
-                [
-                  { value: 'Camera', label: 'Camera' },
-                  { value: 'Battery', label: 'Battery' },
-                  { value: 'Screen', label: 'Screen' },
-                  { value: 'Performance', label: 'Performance' },
-                  { value: 'Price', label: 'Price' },
-                ]
-              }
-              selectedKey={selectedAspectsFilter}
-              onSelectionChange={handleSelectAspectSentimentchange}
-            >
-              {(item) => <AutocompleteItem key={item.value}>{item.label}</AutocompleteItem>}
-            </Autocomplete>
-          </div>
-          <div className="w-full sm:w-2/3 md:w-1/2 lg:w-1/3 my-2 flex justify-end bg-white rounded-[12px]">
-            <Autocomplete
-              classNames="w-full"
-              variant="bordered"
-              label="Select Sentiment"
-              items={!showNeutralData ?
-                [
-                  { value: 'pos', label: 'Positive' },
-                  { value: 'neg', label: 'Negative' }
-                ] :
-                [
-                  { value: 'pos', label: 'Positive' },
-                  { value: 'neg', label: 'Negative' },
-                  { value: 'neu', label: 'Neutral' }
-                ]}
-              selectedKey={selectedSentimentsFilter}
-              onSelectionChange={handleSelectSentimentchange}
-            >
-              {(item) => <AutocompleteItem key={item.value}>{item.label}</AutocompleteItem>}
-            </Autocomplete>
-          </div>
-          <div>
-            <Checkbox defaultSelected={!showNeutralData} radius="sm"
-              checked={showNeutralData}
-              onChange={handleCheckboxChangeNeutralData}>
-              Show Positive and Negative
-            </Checkbox>
-          </div>
-        </div>
-        {selectedModelSm1 && selectedModelSm2 && (
-          <div className="grid grid-cols-11 gap-3">
-            <div className="col-span-5 grid grid-cols-5">
-              <div className="col-span-5 overflow-y-auto shadow-md p-2 my-2 bg-white max-h-screen" style={{ borderRadius: "20px", maxHeight: "81vh" }}>
-                <table id="dataTable" className="md:w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 px-5">
-                  <colgroup>
-                    <col style={{ width: "5%", maxWidth: "5%" }} />
-                    <col style={{ width: "60%", maxWidth: "60%" }} />
-                    <col style={{ width: "25%", maxWidth: "25%" }} />
-                    <col style={{ width: "10%", maxWidth: "10%" }} />
-                  </colgroup>
-                  <thead className="text-base">
-                    <tr>
-                      <th scope="col" className="pl-5 pr-1 py-2">
-                      </th>
-                      <th scope="col" className="px-2 py-2">
-                        {selectedAspectsFilter ? `${selectedAspectsFilter} Review` : "Overall Review"}
-                      </th>
-                      <th scope="col" className="px-3 py-2">
-                        Model
-                      </th>
-                      <th scope="col" className="px-2 py-2">
-                        Sentiment
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {selectedAspectsFilter !== "" ? (
-                      filterReviews().map((review, index) => (
-                        <tr key={`aspect_${index}`}>
-                          <th scope="row" className="pl-5 pr-1 py-3 font-medium text-gray-500 whitespace-nowrap dark:text-white">
-                            {index + 1}
-                          </th>
-                          <td className="px-2 py-2">
-                            {review.textDisplay_aspect}
-                          </td>
-                          <td className="px-3 py-2">
-                            {review.smartphoneName}
-                          </td>
-                          <td className="px-2 py-2 text-center">
-                            <span style={{
-                              padding: "3px",
-                              border: "1px solid #DCF4E7",
-                              borderRadius: "5px",
-                              backgroundColor: getBackgroundColor(review.Aspect_Sentiment_Label),
-                              color: getTextColor(review.Aspect_Sentiment_Label),
-                              display: 'inline-block',
-                            }}>
-                              {getSentimentText(review.Aspect_Sentiment_Label)}
-                            </span>
-                          </td>
-                        </tr>
-                      ))
-                    ) : (
-                      filterReviews().map((review, index) => (
-                        <tr key={`sentiment_${index}`}>
-                          <th scope="row" className="pl-5 pr-1 py-3 font-medium text-gray-500 whitespace-nowrap dark:text-white">
-                            {index + 1}
-                          </th>
-                          <td className="px-2 py-2">
-                            {review.textDisplay}
-                          </td>
-                          <td className="px-3 py-2">
-                            {review.smartphoneName}
-                          </td>
-                          <td className="px-2 py-2 text-center">
-                            <span style={{
-                              padding: "3px",
-                              border: "1px solid #DCF4E7",
-                              borderRadius: "5px",
-                              backgroundColor: getBackgroundColor(review.Sentiment_Label),
-                              color: getTextColor(review.Sentiment_Label),
-                              display: 'inline-block',
-                            }}>
-                              {getSentimentText(review.Sentiment_Label)}
-                            </span>
-                          </td>
-                        </tr>
-                      ))
-                    )}
-                  </tbody>
-                </table>
+              {/* Select Smartphones */}
+              <div id="SelectSmartphoneElm1" className="col-span-3 bg-white rounded-[12px]">
+                <Autocomplete
+                  isRequired
+                  variant="bordered"
+                  label="Select Smartphone"
+                  items={smartphoneModelsSm1
+                    .filter(model => model !== selectedModelSm2 && model !== selectedModelSm3) // Filter out selected smartphones from other elements
+                    .map(model => ({ label: model, value: model }))}
+                  selectedKey={selectedModelSm1}
+                  onSelectionChange={setSelectedModelSm1}
+                  // disabled={!selectedBrand}
+                  className="max-w-xs"
+                  multiple
+                >
+                  {(item) => <AutocompleteItem key={item.value}>{item.label}</AutocompleteItem>}
+                </Autocomplete>
               </div>
             </div>
-            <div className="col-span-6">
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <div className="bg-white shadow-md rounded-[20px] md:p-3 md:mr-4 md:my-2 w-full h-full" style={{ maxHeight: "36vh" }}>
-                    <canvas id="fullStackBarChartAspect" src="..."></canvas>
-                  </div>
-                  <div className="bg-white shadow-md rounded-[20px] md:my-2 w-full h-full" style={{ maxHeight: "44vh" }}>
+
+            <div className="grid grid-cols-5 gap-2">
+              <div id="SelectBrandElm2" className="col-span-2 bg-white rounded-[12px]">
+                <Autocomplete
+                  isRequired
+                  variant="bordered"
+                  label="Select Brand"
+                  items={brandName.map(brand => ({ label: brand, value: brand }))}
+                  selectedKey={selectedBrandSm2}
+                  onSelectionChange={setSelectedBrandSm2}
+                  className="max-w-xs"
+                >
+                  {(item) => <AutocompleteItem key={item.value}>{item.label}</AutocompleteItem>}
+                </Autocomplete>
+              </div>
+
+              {/* Select Smartphones */}
+              <div id="SelectSmartphoneElm2" className="col-span-3 bg-white rounded-[12px]">
+                <Autocomplete
+                  isRequired
+                  variant="bordered"
+                  label="Select Smartphone"
+                  items={smartphoneModelsSm2
+                    .filter(model => model !== selectedModelSm1 && model !== selectedModelSm3) // Filter out selected smartphones from other elements
+                    .map(model => ({ label: model, value: model }))}
+                  selectedKey={selectedModelSm2}
+                  onSelectionChange={setSelectedModelSm2}
+                  // disabled={!selectedBrand}
+                  className="max-w-xs"
+                  multiple
+                >
+                  {(item) => <AutocompleteItem key={item.value}>{item.label}</AutocompleteItem>}
+                </Autocomplete>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-5 gap-2">
+              <div id="SelectBrandElm3" className="col-span-2 bg-white rounded-[12px]">
+                <Autocomplete
+                  variant="bordered"
+                  label="Select Brand"
+                  items={brandName.map(brand => ({ label: brand, value: brand }))}
+                  selectedKey={selectedBrandSm3}
+                  onSelectionChange={setSelectedBrandSm3}
+                  className="max-w-xs"
+                >
+                  {(item) => <AutocompleteItem key={item.value}>{item.label}</AutocompleteItem>}
+                </Autocomplete>
+              </div>
+
+              <div id="SelectSmartphoneElm3" className="col-span-3 bg-white rounded-[12px]">
+                <Autocomplete
+                  variant="bordered"
+                  label="Select Smartphone"
+                  items={smartphoneModelsSm3
+                    .filter(model => model !== selectedModelSm1 && model !== selectedModelSm2) // Filter out selected smartphones from other elements
+                    .map(model => ({ label: model, value: model }))}
+                  selectedKey={selectedModelSm3}
+                  onSelectionChange={setSelectedModelSm3}
+                  // disabled={!selectedBrand}
+                  className="max-w-xs"
+                  multiple
+                >
+                  {(item) => <AutocompleteItem key={item.value}>{item.label}</AutocompleteItem>}
+                </Autocomplete>
+              </div>
+            </div>
+
+          </div>
+        </div>
+        <div className="md:container md:mx-auto md:mt-1 md:mb-5 md:w-full md:h-full m-h-screen">
+          <div className="flex justify-center items-center gap-1">
+            <div className="my-2 flex justify-end bg-white rounded-[12px]">
+              <Autocomplete
+                size="sm"
+                classNames="w-full"
+                variant="bordered"
+                label="Select Smartphone"
+                items={[
+                  { value: selectedModelSm1, label: selectedModelSm1 },
+                  { value: selectedModelSm2, label: selectedModelSm2 },
+                  { value: selectedModelSm3, label: selectedModelSm3 }
+                ].filter(item => item.value !== "")}
+                selectedKey={selectedModelFilter}
+                onSelectionChange={handleSelectModelSentimentchange}
+              >
+                {(item) => <AutocompleteItem key={item.value}>{item.label}</AutocompleteItem>}
+              </Autocomplete>
+            </div>
+            <div className="my-2 flex justify-end bg-white rounded-[12px]">
+              <Autocomplete
+                size="sm"
+                classNames="w-full"
+                variant="bordered"
+                label="Select Aspect"
+                items={
+                  [
+                    { value: 'Camera', label: 'Camera' },
+                    { value: 'Battery', label: 'Battery' },
+                    { value: 'Screen', label: 'Screen' },
+                    { value: 'Performance', label: 'Performance' },
+                    { value: 'Price', label: 'Price' },
+                  ]
+                }
+                selectedKey={selectedAspectsFilter}
+                onSelectionChange={handleSelectAspectSentimentchange}
+              >
+                {(item) => <AutocompleteItem key={item.value}>{item.label}</AutocompleteItem>}
+              </Autocomplete>
+            </div>
+            <div className="my-2 flex justify-end bg-white rounded-[12px]">
+              <Autocomplete
+                size="sm"
+                classNames="w-full"
+                variant="bordered"
+                label="Select Sentiment"
+                items={!showNeutralData ?
+                  [
+                    { value: 'pos', label: 'Positive' },
+                    { value: 'neg', label: 'Negative' }
+                  ] :
+                  [
+                    { value: 'pos', label: 'Positive' },
+                    { value: 'neg', label: 'Negative' },
+                    { value: 'neu', label: 'Neutral' }
+                  ]}
+                selectedKey={selectedSentimentsFilter}
+                onSelectionChange={handleSelectSentimentchange}
+              >
+                {(item) => <AutocompleteItem key={item.value}>{item.label}</AutocompleteItem>}
+              </Autocomplete>
+            </div>
+            <div>
+              <Checkbox defaultSelected={!showNeutralData} radius="sm"
+                checked={showNeutralData}
+                onChange={handleCheckboxChangeNeutralData}>
+                Show Positive and Negative
+              </Checkbox>
+            </div>
+          </div>
+          {selectedModelSm1 && selectedModelSm2 && (
+            <div className="grid grid-cols-11 gap-3">
+              <div className="col-span-5 grid grid-cols-5">
+                <div className="col-span-5 overflow-y-auto shadow-md p-2 my-2 bg-white max-h-screen" style={{ borderRadius: "20px", maxHeight: "85vh" }}>
+                  <table id="dataTable" className="md:w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 px-5">
+                    <colgroup>
+                      <col style={{ width: "7%", maxWidth: "7%" }} />
+                      <col style={{ width: "50%", maxWidth: "50%" }} />
+                      <col style={{ width: "20%", maxWidth: "20%" }} />
+                      <col style={{ width: "13%", maxWidth: "13%" }} />
+                    </colgroup>
+                    <thead className="text-base">
+                      <tr>
+                        <th scope="col" className="pl-5 pr-1 py-2">
+                        </th>
+                        <th scope="col" className="px-2 py-2">
+                          {selectedAspectsFilter ? `${selectedAspectsFilter} Review` : "Overall Review"}
+                        </th>
+                        <th scope="col" className="px-3 py-2">
+                          Model
+                        </th>
+                        <th scope="col" className="px-2 py-2">
+                          Sentiment
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {selectedAspectsFilter !== "" ? (
+                        filterReviews().map((review, index) => (
+                          <tr key={`aspect_${index}`}>
+                            <th scope="row" className="pl-5 pr-1 py-3 font-medium text-gray-500 whitespace-nowrap dark:text-white">
+                              {index + 1}
+                            </th>
+                            <td className="px-2 py-2">
+                              {review.textDisplay_aspect}
+                            </td>
+                            <td className="px-3 py-2">
+                              {review.smartphoneName}
+                            </td>
+                            <td className="px-2 py-2 text-center">
+                              <span style={{
+                                padding: "3px",
+                                border: "1px solid #DCF4E7",
+                                borderRadius: "5px",
+                                backgroundColor: getBackgroundColor(review.Aspect_Sentiment_Label),
+                                color: getTextColor(review.Aspect_Sentiment_Label),
+                                display: 'inline-block',
+                              }}>
+                                {getSentimentText(review.Aspect_Sentiment_Label)}
+                              </span>
+                            </td>
+                          </tr>
+                        ))
+                      ) : (
+                        filterReviews().map((review, index) => (
+                          <tr key={`sentiment_${index}`}>
+                            <th scope="row" className="pl-5 pr-1 py-3 font-medium text-gray-500 whitespace-nowrap dark:text-white">
+                              {index + 1}
+                            </th>
+                            <td className="px-2 py-2">
+                              {review.textDisplay}
+                            </td>
+                            <td className="px-3 py-2">
+                              {review.smartphoneName}
+                            </td>
+                            <td className="px-2 py-2 text-center">
+                              <span style={{
+                                padding: "3px",
+                                border: "1px solid #DCF4E7",
+                                borderRadius: "5px",
+                                backgroundColor: getBackgroundColor(review.Sentiment_Label),
+                                color: getTextColor(review.Sentiment_Label),
+                                display: 'inline-block',
+                              }}>
+                                {getSentimentText(review.Sentiment_Label)}
+                              </span>
+                            </td>
+                          </tr>
+                        ))
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <div className="col-span-6">
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="bg-white shadow-md rounded-[20px] md:p-3 h-full" style={{ maxHeight: "40vh" }}>
                     <canvas id="RadarChart" className="mx-auto" src="..."></canvas>
                   </div>
-                </div>
-                <div>
-                  <div className="bg-white shadow-md rounded-[20px] md:p-3 md:my-2 w-full h-full" style={{ maxHeight: "40vh" }}>
+                  <div className="bg-white shadow-md rounded-[20px] md:p-3 h-full" style={{ maxHeight: "40vh" }}>
                     <canvas id="ovaBarChart">barchart</canvas>
                   </div>
-                  <div className="bg-white shadow-md rounded-[20px] md:p-3 md:mr-4 md:my-2 w-full h-full" style={{ maxHeight: "40vh" }}>
-                    <canvas id="fullStackBarChart" src="..."></canvas>
+                  <div className="col-span-2 h-full" style={{ height: "50vh", maxHeight: "45vh" }}>
+                    <div className="bg-white shadow-md rounded-[20px] md:p-3 w-full h-full">
+                      <canvas id="fullStackBarChartAspect" src="..."></canvas>
+                    </div>
+                    {/* <div className="bg-white shadow-md rounded-[20px] md:p-3 md:mr-4 md:my-2 w-full h-full" style={{ maxHeight: "40vh" }}>
+                      <canvas id="fullStackBarChart" src="..."></canvas>
+                    </div> */}
                   </div>
                 </div>
               </div>
+            </div>
+          )}
+
+        </div>
+
+
+        {selectedModelSm1 && selectedModelSm2 && (
+          <div className="md:mb-5">
+            <div className="text-center md:my-5">
+              <span className="text-3xl font-semibold font-mono md:font-mono">Smartphone Information</span>
+            </div>
+            <div className="md:mx-auto w-full max-w-5xl">
+              <Table aria-label="Example table with dynamic content">
+                <TableHeader columns={columnsInfoData}>
+                  {(column, index) => (
+                    <TableColumn key={column.key} className="text-base"
+                      style={{ width: index === 0 ? "5%" : "25%" }}>
+                      {column.label}
+                    </TableColumn>
+                  )}
+                </TableHeader>
+                <TableBody items={rowsInfoData}>
+                  {(item) => (
+                    <TableRow key={item.info}>
+                      {(columnKey) => <TableCell>{item[columnKey]}</TableCell>}
+                    </TableRow>
+                  )}
+                </TableBody>
+              </Table>
             </div>
           </div>
         )}
-
       </div>
-
-
-      {selectedModelSm1 && selectedModelSm2 && (
-        <div>
-          <div className="text-center md:my-5">
-            <span className="text-3xl font-semibold font-mono md:font-mono">Smartphone Information</span>
-          </div>
-          <div className="md:mx-auto w-full max-w-4xl">
-            <Table aria-label="Example table with dynamic content">
-              <TableHeader columns={columnsInfoData}>
-                {(column, index) => (
-                  <TableColumn key={column.key} className="text-base"
-                    style={{ width: index === 0 ? "5%" : "25%" }}>
-                    {column.label}
-                  </TableColumn>
-                )}
-              </TableHeader>
-              <TableBody items={rowsInfoData}>
-                {(item) => (
-                  <TableRow key={item.info}>
-                    {(columnKey) => <TableCell>{item[columnKey]}</TableCell>}
-                  </TableRow>
-                )}
-              </TableBody>
-            </Table>
-          </div>
-        </div>
-      )}
     </>
   );
 
