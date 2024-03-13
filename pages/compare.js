@@ -28,7 +28,7 @@ export default function compare() {
   const [smartphoneInfoSm3, setsmartphoneInfoSm3] = useState({});
 
   const [reviews, setReviews] = useState([]);
-  const [aspectsReviews, setAspectsReviews] = useState([]);
+  // const [aspectsReviews, setAspectsReviews] = useState([]);
 
   const [showNeutralData, setShowNeutralData] = useState(true);
 
@@ -310,10 +310,11 @@ export default function compare() {
   };
 
   useEffect(() => {
-    const fetchReviews = async () => {
+    const fetchReviews = async (smartphoneName) => {
       try {
         setIsLoaded(true);
         const selectedSmartphones = [selectedModelSm1, selectedModelSm2, selectedModelSm3].filter(model => model);
+
         const promises = selectedSmartphones.map(model =>
           axios.get(`/api/compare_smartphonereview?smartphone=${encodeURIComponent(model)}&selectedAspect=${encodeURIComponent(selectedAspectsFilter)}`));
 
@@ -343,7 +344,7 @@ export default function compare() {
           const response = await axios.get(`/api/compare_smartphoneInfo?brandName=${encodeURIComponent(selectedBrand)}`);
           console.log('Fetched data for', selectedBrand, response.data); // Check fetched data
           setSmartphoneModels(response.data); // Update the state variable with fetched data
-          console.log('State updated for', selectedBrand, response.data); // Check state variable update
+          // console.log('State updated for', selectedBrand, response.data); // Check state variable update
         } catch (error) {
           console.error('Error fetching smartphone review data:', error);
         } finally {
@@ -366,16 +367,18 @@ export default function compare() {
   }, [selectedBrandSm1, selectedBrandSm2, selectedBrandSm3]);
 
   useEffect(() => {
-    const fetchSmartphoneInfo = async (smartphoneName, setSmartphoneInfo) => {
+    const fetchSmartphoneInfo = async (smartphoneName) => {
       if (smartphoneName) {
         try {
           setIsLoaded(true);
           const response = await axios.get(`/api/compare_smartphoneInfo?smartphone=${encodeURIComponent(smartphoneName)}`);
-          console.log('Fetched data for', smartphoneName, response.data); // Check fetched data
-          if (response.data.length > 0) {
-            setSmartphoneInfo(response.data[0].spec); // Update the state variable with fetched data
-          } else {
-            console.error('No data found for smartphone:', smartphoneName);
+          console.log('Fetched data for Information', smartphoneName, response.data); // Check fetched data
+          if (smartphoneName === selectedModelSm1) {
+            setsmartphoneInfoSm1(response.data[0].spec);
+          } else if (smartphoneName === selectedModelSm2) {
+            setsmartphoneInfoSm2(response.data[0].spec);
+          } else if (smartphoneName === selectedModelSm3) {
+            setsmartphoneInfoSm3(response.data[0].spec);
           }
         } catch (error) {
           console.error('Error fetching smartphone review data:', error);
@@ -385,17 +388,15 @@ export default function compare() {
       }
     };
 
-    if (selectedModelSm1) {
-      fetchSmartphoneInfo(selectedModelSm1, setsmartphoneInfoSm1)
+    if (selectedModelSm1 && selectedModelSm2) {
+      if (selectedModelSm3) {
+        fetchSmartphoneInfo(selectedModelSm3)
+      } else {
+        fetchSmartphoneInfo(selectedModelSm1)
+        fetchSmartphoneInfo(selectedModelSm2)
+      }
     }
 
-    if (selectedModelSm2) {
-      fetchSmartphoneInfo(selectedModelSm2, setsmartphoneInfoSm2)
-    }
-
-    if (selectedModelSm3) {
-      fetchSmartphoneInfo(selectedModelSm3, setsmartphoneInfoSm3)
-    }
   }, [selectedModelSm1, selectedModelSm2, selectedModelSm3]);
 
   useEffect(() => {
@@ -444,7 +445,7 @@ export default function compare() {
             neg: aspectData.Price ? aspectData.Price.count_neg || 0 : 0
           }
         });
-
+        console.log("Fetch Sentiment data", smartphoneName)
       } catch (error) {
         console.error(`Error fetching smartphones for ${smartphoneName}:`, error);
       } finally {
@@ -452,51 +453,16 @@ export default function compare() {
       }
     };
 
-    if (selectedModelSm1) {
-      fetchSmartphoneSentimentData(selectedModelSm1, setOverviewSm1, setAspectSm1);
+    if (selectedModelSm1 && selectedModelSm2) {
+      if (selectedModelSm3) {
+        fetchSmartphoneSentimentData(selectedModelSm3, setOverviewSm3, setAspectSm3);
+      } else {
+        fetchSmartphoneSentimentData(selectedModelSm1, setOverviewSm1, setAspectSm1);
+        fetchSmartphoneSentimentData(selectedModelSm2, setOverviewSm2, setAspectSm2);
+      }
     }
 
-    if (selectedModelSm2) {
-      fetchSmartphoneSentimentData(selectedModelSm2, setOverviewSm2, setAspectSm2);
-    }
-
-    if (selectedModelSm3) {
-      fetchSmartphoneSentimentData(selectedModelSm3, setOverviewSm3, setAspectSm3);
-    }
   }, [selectedModelSm1, selectedModelSm2, selectedModelSm3]);
-
-  // useEffect(() => {
-  //   const fetchSmartphoneInfo = async (smartphoneName, setSmartphoneInfo) => {
-  //     if (smartphoneName) {
-  //       try {
-  //         setIsLoaded(true);
-  //         const response = await axios.get(`/api/compare_smartphoneInfo?smartphone=${encodeURIComponent(smartphoneName)}`);
-  //         console.log('Fetched data for', smartphoneName, response.data); // Check fetched data
-  //         if (response.data.length > 0) {
-  //           setSmartphoneInfo(response.data[0].spec); // Update the state variable with fetched data
-  //         } else {
-  //           console.error('No data found for smartphone:', smartphoneName);
-  //         }
-  //       } catch (error) {
-  //         console.error('Error fetching smartphone review data:', error);
-  //       } finally {
-  //         setIsLoaded(false);
-  //       }
-  //     }
-  //   };
-
-  //   if (selectedModelSm1) {
-  //     fetchSmartphoneInfo(selectedModelSm1, setsmartphoneInfoSm1)
-  //   }
-
-  //   if (selectedModelSm2) {
-  //     fetchSmartphoneInfo(selectedModelSm2, setsmartphoneInfoSm2)
-  //   }
-
-  //   if (selectedModelSm3) {
-  //     fetchSmartphoneInfo(selectedModelSm3, setsmartphoneInfoSm3)
-  //   }
-  // }, [selectedModelSm1, selectedModelSm2, selectedModelSm3]);
 
   ////////////////////////// Chart ////////////////////////
 
@@ -989,7 +955,7 @@ export default function compare() {
         if (showNeutralData) {
           datasets[1].data.push(overviewSm3.neu);
           datasets[2].data.push(overviewSm3.neg);
-        }else{
+        } else {
           datasets[1].data.push(overviewSm3.neg);
         }
       }
@@ -1323,13 +1289,17 @@ export default function compare() {
               </div>
               <div className="col-span-6">
                 <div className="grid grid-cols-2 gap-3">
-                  <div className="bg-white shadow-md rounded-[20px] md:p-3 h-full" style={{ maxHeight: "40vh" }}>
-                    <canvas id="RadarChart" className="mx-auto" src="..."></canvas>
+                  <div style={{ maxHeight: "40vh" }}>
+                    <div className="bg-white shadow-md rounded-[20px] md:p-3 w-full h-full">
+                      <canvas id="RadarChart" className="mx-auto" src="..."></canvas>
+                    </div>
                   </div>
-                  <div className="bg-white shadow-md rounded-[20px] md:p-3 h-full" style={{ maxHeight: "40vh" }}>
-                    <canvas id="ovaBarChart">barchart</canvas>
+                  <div style={{ maxHeight: "40vh" }}>
+                    <div className="bg-white shadow-md rounded-[20px] md:p-3 w-full h-full">
+                      <canvas id="ovaBarChart">barchart</canvas>
+                    </div>
                   </div>
-                  <div className="col-span-2 h-full" style={{ height: "50vh", maxHeight: "45vh" }}>
+                  <div className="col-span-2 w-full h-full" style={{ height: "50vh", maxHeight: "45vh" }}>
                     <div className="bg-white shadow-md rounded-[20px] md:p-3 w-full h-full">
                       <canvas id="fullStackBarChartAspect" src="..."></canvas>
                     </div>
