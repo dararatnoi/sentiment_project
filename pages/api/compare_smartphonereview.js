@@ -3,7 +3,7 @@ import clientPromise from "../../lib/mongodb";
 export default async function handler(req, res) {
     try {
         let { smartphone, selectedAspect } = req.query;
-        // smartphone = "iPhone 14 Pro"; // Assigning a new value to the variable
+        // smartphone = "iPhone 12"; // Assigning a new value to the variable
         // selectedAspect = "Camera";
 
         if (!smartphone) {
